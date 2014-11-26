@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background: rgba(0,0,0,0.1); border: none;">
+    <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">
+            <p>LostInNetwork</p>
+          </a>
+        </div>
+        <ul class="nav navbar-nav pull-right">
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Help</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+</div>
+{% endblock %}

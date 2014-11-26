@@ -6,9 +6,9 @@
     <div class="row">
       <div class="col-md-4"></div>
       <div class="col-md-4">
-        <div class="well" style="margin-top: 50px; padding: 30px; padding-bottom: 10px;">
+        <div class="well" style="margin-top: 50px; padding: 30px; padding-bottom: 10px; background: rgba(0,0,0,0.1); border:none;">
           <form class="form-horizontal" method="post" action="">
-            <legend>Login</legend>
+            <legend style="color: rgba(255, 255, 255, 1);">Login</legend>
             {% with messages = get_flashed_messages() %}
               {% if messages %}
                 {% for message in messages %}
@@ -17,18 +17,18 @@
               {% endif %}
             {% endwith %}
             {{ form.hidden_tag() }}
-            <div class="form-group">
+            <div class="form-group {% if form.username.errors %}has-error{% endif %}">
               {% if form.username.errors %}
                 {% for err in form.username.errors %}
-                <div class="alert alert-danger" role="alert">{{ err }}</div>
+                <label class="control-label">{{ err }}</label>
                 {% endfor %}
               {% endif %}
               {{ form.username(class="form-control", placeholder="Username") }}
             </div>
-            <div class="form-group">
+            <div class="form-group {% if form.password.errors %}has-error{% endif %}">
               {% if form.password.errors %}
                 {% for err in form.password.errors %}
-                <div class="alert alert-danger" role="alert">{{ err }}</div>
+                <label class="control-label">{{ err }}</label>
                 {% endfor %}
               {% endif %}
               {{ form.password(class="form-control", placeholder="Password") }}

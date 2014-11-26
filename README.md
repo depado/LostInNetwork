@@ -1,6 +1,6 @@
 Lost In Network
 =============
-gggA web application to manage and detect security flaws on devices on a network.    
+A web application to manage and detect security flaws on devices on a network.
 Installation
 ---------------
 First of all, download the archive or clone the repository. You will have nearly everything to work out of the box as soon as this is done.   
