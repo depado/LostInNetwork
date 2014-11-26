@@ -1,0 +1,5 @@
+venv
+app/static/bower_components
+config.py
+__pycache__/
+.idea
