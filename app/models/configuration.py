@@ -17,3 +17,14 @@ class Configuration(db.Model):
     path = db.Column(db.String(100), unique=True)
 
     risks = db.relationship('Risk', secondary=configuration_risks, backref=db.backref('configurations', lazy='dynamic'))
+
+class ConfigurationValue(db.Model):
+    """
+    Represents values from Configuration files
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    version = db.Column(db.String(50))
+    model = db.Column(db.String(50)) 
+
+    configuration_id = db.Column(db.Integer, db.ForeignKey('Configuration.id'))
+
