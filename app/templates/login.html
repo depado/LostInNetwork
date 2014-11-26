@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if form %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <div class="well" style="margin-top: 50px; padding: 30px; padding-bottom: 10px;">
+          <form class="form-horizontal" method="post" action="">
+            <legend>Login</legend>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="alert alert-danger" role="alert">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+              {% if form.username.errors %}
+                {% for err in form.username.errors %}
+                <div class="alert alert-danger" role="alert">{{ err }}</div>
+                {% endfor %}
+              {% endif %}
+              {{ form.username(class="form-control", placeholder="Username") }}
+            </div>
+            <div class="form-group">
+              {% if form.password.errors %}
+                {% for err in form.password.errors %}
+                <div class="alert alert-danger" role="alert">{{ err }}</div>
+                {% endfor %}
+              {% endif %}
+              {{ form.password(class="form-control", placeholder="Password") }}
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary center-block">
+                <span>Login</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}
