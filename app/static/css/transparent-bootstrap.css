@@ -8,6 +8,10 @@ body {
     padding-bottom: 0px; 
 }
 
+.setting {
+    padding: 30px; 
+}
+
 .transparent {
     background: rgba(0,0,0,0.1); 
     border:none;

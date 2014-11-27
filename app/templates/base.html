@@ -8,6 +8,9 @@
 
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bower_components/messenger/build/css/messenger.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='bower_components/messenger/build/css/messenger-theme-ice.css') }}" rel="stylesheet">
+    
     <link href="{{ url_for('static', filename='css/transparent-bootstrap.css') }}" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
@@ -26,5 +29,16 @@
   </head>
   <body>
     {% block content %}{% endblock %}
+    <script src="{{ url_for('static', filename='bower_components/messenger/build/js/messenger.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/messenger/build/js/messenger-theme-ice.js') }}"></script>
+    <script type="text/javascript">
+        Messenger.options = {
+          extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
+          theme: 'ice'
+        }
+        {% with messages = get_flashed_messages() %}{% if messages %}{% for message in messages %}
+        Messenger().post("{{message}}");
+        {% endfor %}{% endif %}{% endwith %}
+    </script>
   </body>
 </html>

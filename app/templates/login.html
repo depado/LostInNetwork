@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "bootstrap_form_helper.html" import render_field %}
 
 {% block content %}
   {% if form %}
@@ -10,30 +11,9 @@
           <div class="panel-body">
             <form class="form-horizontal" method="post" action="">
               <legend class="clear-legend">Login</legend>
-              {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                  {% for message in messages %}
-                    <div class="alert alert-danger" role="alert">{{ message }}</div>
-                  {% endfor %}
-                {% endif %}
-              {% endwith %}
               {{ form.hidden_tag() }}
-              <div class="form-group {% if form.username.errors %}has-error{% endif %}">
-                {% if form.username.errors %}
-                  {% for err in form.username.errors %}
-                  <label class="control-label">{{ err }}</label>
-                  {% endfor %}
-                {% endif %}
-                {{ form.username(class="form-control", placeholder="Username") }}
-              </div>
-              <div class="form-group {% if form.password.errors %}has-error{% endif %}">
-                {% if form.password.errors %}
-                  {% for err in form.password.errors %}
-                  <label class="control-label">{{ err }}</label>
-                  {% endfor %}
-                {% endif %}
-                {{ form.password(class="form-control", placeholder="Password") }}
-              </div>
+              {{ render_field(form.username, placeholder="Username") }}
+              {{ render_field(form.password, placeholder="Password") }}
               <div class="form-group text-center">
                 <button type="submit" class="btn btn-primary">
                   <span>Login</span>

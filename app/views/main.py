@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, flash
 
 from flask_login import login_user, logout_user, current_user, login_required
 
 from app import app
-from app.forms import LoginForm
+from app.forms import LoginForm, SettingsForm
 from app.models import User
 
 
@@ -30,3 +30,16 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    form = SettingsForm(request.form)
+    if form.validate_on_submit():
+        if form.newpassword.data and form.oldpassword.data and form.repeat.data:
+            current_user.set_password(form.newpassword.data)
+            current_user.save()
+            flash("Successfully set new password")
+        return redirect(url_for('settings'))
+    else:
+        return render_template("settings.html", form=form)
