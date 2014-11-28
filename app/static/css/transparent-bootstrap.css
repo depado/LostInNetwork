@@ -32,5 +32,25 @@ body {
     text-align: center;
 }
 
+.form-inline .form-horizontal .control-group > label {
+  text-align: left;
+}
+.form-horizontal .form-inline .control-group > label {
+  float: none;
+  padding-top: 0;
+  text-align: left;
+  width: 100%;
+}
+.form-horizontal .form-inline .controls {
+  margin-left: 0;
+}
+.form-horizontal .form-inline.form-actions,
+.form-horizontal .form-inline .form-actions {
+  padding-left: 20px;
+}
+.control-group .control-group {
+  margin-bottom: 0;
+}
+
 
 

@@ -8,7 +8,6 @@ from app import app
 from app.forms import LoginForm, SettingsForm
 from app.models import User
 
-
 @app.route('/', methods=['GET'])
 @login_required
 def index():

@@ -3,3 +3,4 @@
 from .login import LoginForm
 from .register import RegisterForm
 from .settings import SettingsForm
+from .device import DeviceForm, DeviceTypeCategoryForm, DeviceTypeForm

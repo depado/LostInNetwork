@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from .main import index, login, logout
+from .main import index, login, logout, settings
+from .devices import devices

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% from "bootstrap_form_helper.html" import render_field, render_fk_field %}
+
+{% block content %}
+{% include 'menu.html' %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            {% for device in devices %}
+            <p>{{device}}</p>
+            {% endfor %}
+        </div>
+        <div class="col-md-6">
+            <div class="well setting transparent">
+                <form class="form-horizontal" method="post" action="">
+                    <legend class="clear-legend">Add a Device</legend>
+                    {{ device_form.hidden_tag() }}
+                    {{ render_field(device_form.name, "Name") }}
+                    {{ render_field(device_form.ip1, "First IP") }}
+                    {{ render_field(device_form.ip2, "Second IP") }}
+                    {{ render_fk_field(device_form.devicetype, "Device Type") }}
+                    {{ render_fk_field(device_form.lan, "Lan") }}
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
