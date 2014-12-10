@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from app import db
+from datetime import datetime
 
 
 class DeviceTypeCategory(db.Model):
@@ -8,6 +9,8 @@ class DeviceTypeCategory(db.Model):
     Represents the Category of a DeviceType
     Example : Firewall, Router, etc...
     """
+    friendly_name = "Device Type Category"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
 
@@ -31,6 +34,8 @@ class DeviceType(db.Model):
     Represents the Type of a Device.
     Contains FK to a Manufacturer and a DeviceTypeCategory.
     """
+    friendly_name = "Device Type"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
 
@@ -71,11 +76,14 @@ class Device(db.Model):
     Represents a Device, associated with a DeviceType, a Lan and a Configuration.
     A Device also has Risks associated to it.
     """
+    friendly_name = "Device"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
     ip1 = db.Column(db.String(50))
     ip2 = db.Column(db.String(50))
     date = db.Column(db.DateTime())
+    password = db.Column(db.String(50))
 
     lan_id = db.Column(db.Integer, db.ForeignKey('lan.id'))
     configuration_id = db.Column(db.Integer, db.ForeignKey('configuration.id'))
@@ -84,6 +92,7 @@ class Device(db.Model):
     risks = db.relationship('Risk', secondary=device_risks, backref=db.backref('pages', lazy='dynamic'))
 
     def save(self):
+        self.date = datetime.now()
         db.session.add(self)
         try:
             db.session.commit()
@@ -103,4 +112,3 @@ class Device(db.Model):
 
     def __repr__(self):
         return self.name
-

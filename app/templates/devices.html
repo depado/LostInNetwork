@@ -22,7 +22,7 @@
                         <div class="col-md-9">
                             <p>{{ device.ip1 }}</p>
                             {% if device.ip2 %}<p>{{ device.ip2 }}</p>{% endif %}
-                            <p>{{ device.devicetype.name }}</p>
+                            <p>{{ device.devicetype.name }} ({{ device.devicetype.manufacturer }}, {{ device.devicetype.devicetypecategory }})</p>
                             <p>{{ device.lan.name }}</p>
                         </div>
                     </div>
@@ -38,6 +38,7 @@
                     {{ render_field(device_form.name, "Name") }}
                     {{ render_field(device_form.ip1, "First IP") }}
                     {{ render_field(device_form.ip2, "Second IP") }}
+                    {{ render_field(device_form.password, "Password") }}
                     {{ render_fk_field(device_form.devicetype, "Device Type") }}
                     {{ render_fk_field(device_form.lan, "Lan") }}
                     <div class="form-group text-center">

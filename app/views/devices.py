@@ -18,6 +18,23 @@ def has_clicked(req, form):
     """
     return req.form['btn'] == "{prefix}save-btn".format(prefix=form._prefix)
 
+
+def push_new_from_form(model, form):
+    """
+    Automatically create the object and save it from the data in the form.
+    Automatic rollback of the database in case of error.
+
+    :param model: The model associated to the form.
+    :param form: The form with data inside.
+    """
+    instance = model()
+    form.populate_obj(instance)
+    if instance.save():
+        flash("{} created and saved.".format(getattr(instance, "friendly_name", instance.__class__.__name__)), "info")
+    else:
+        flash("Something went wrong.", "error")
+
+
 @app.route('/devices', methods=['GET', 'POST'])
 @login_required
 def devices():
@@ -30,51 +47,31 @@ def devices():
     if request.method == 'POST':
         if has_clicked(request, device_form):
             if device_form.validate_on_submit():
-                device = Device(name=device_form.name.data, ip1=device_form.ip1.data, ip2=device_form.ip2.data,
-                                devicetype=device_form.devicetype.data, lan=device_form.lan.data)
-                if device.save():
-                    flash("Successfully created the Device.", "info")
-                else:
-                    flash("Something went wrong.", "error")
+                push_new_from_form(Device, device_form)
 
         elif has_clicked(request, devicetype_form):
             if devicetype_form.validate_on_submit():
-                devicetype = DeviceType(name=devicetype_form.name.data, manufacturer=devicetype_form.manufacturer.data,
-                                        devicetypecategory=devicetype_form.devicetypecategory.data)
-                if devicetype.save():
-                    flash("Successfully created the Device Type.", "info")
-                else:
-                    flash("Something went wrong.", "error")
+                push_new_from_form(DeviceType, devicetype_form)
 
         elif has_clicked(request, devicetypecategory_form):
             if devicetypecategory_form.validate_on_submit():
-                devicetypecategory = DeviceTypeCategory(name=devicetypecategory_form.name.data)
-                if devicetypecategory.save():
-                    flash("Successfully created the Device Type Category.", "info")
-                else:
-                    flash("Something went wrong.", "error")
+                push_new_from_form(DeviceTypeCategory, devicetypecategory_form)
 
         elif has_clicked(request, lan_form):
             if lan_form.validate_on_submit():
-                lan = Lan(name=lan_form.name.data)
-                if lan.save():
-                    flash("Successfully created the Lan.", "info")
-                else:
-                    flash("Something went wrong.", "error")
+                push_new_from_form(Lan, lan_form)
 
         elif has_clicked(request, manufacturer_form):
             if manufacturer_form.validate_on_submit():
-                manufacturer = Manufacturer(name=manufacturer_form.name.data)
-                if manufacturer.save():
-                    flash("Successfully created the Manufacturer.", "info")
-                else:
-                    flash("Something went wrong.", "error")
+                push_new_from_form(Manufacturer, manufacturer_form)
 
     return render_template('devices.html', devices=Device.query.all(), device_form=device_form,
                            devicetype_form=devicetype_form, devicetypecategory_form=devicetypecategory_form,
                            lan_form=lan_form, manufacturer_form=manufacturer_form, active_page="devices")
 
+
 @app.route("/devices/delete/<int:device_id>", methods=['GET'])
+@login_required
 def delete_device(device_id):
     device = Device.query.filter_by(id=device_id).first_or_404()
     if device.delete():
@@ -83,7 +80,9 @@ def delete_device(device_id):
         flash("Something went wrong.", "error")
     return redirect(url_for('devices'))
 
+
 @app.route("/devices/edit/<int:device_id>", methods=['GET', 'POST'])
+@login_required
 def edit_device(device_id):
     device = Device.query.filter_by(id=device_id).first_or_404()
     form = DeviceForm(obj=device)

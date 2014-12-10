@@ -13,14 +13,14 @@
         <div class="col-md-3">
             <label class="control-label" {% if white %}style="color: rgba(255,255,255,1);"{% endif %}>{{ label }}</label>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-{% if add_button %}6{% else %}9{% endif %}">
             {{ field(class="form-control") }}
         </div>
-        <div class="col-md-3">
         {% if add_button %}
+        <div class="col-md-3">
             <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#{{ field.name }}-modal"><i class="glyphicon glyphicon-plus"></i> New</a>
-        {% endif %}
         </div>
+        {% endif %}
     </div>
 </div>
 <br />
