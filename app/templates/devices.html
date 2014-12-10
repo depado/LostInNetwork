@@ -7,7 +7,31 @@
     <div class="row">
         <div class="col-md-6">
             {% for device in devices %}
-            <p>{{device}}</p>
+            <div class="well white transparent" style="padding-top: 5px; padding-bottom: 5px;">
+                <p style="text-align: center"><b>{{device.name}}</b></p>
+                <div class="container-fluid" style="margin: 0px; padding: 0px;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>First IP</p>
+                            <p>Secondary IP</p>
+                            <p>Device Type</p>
+                            <p>Lan</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>{{ device.ip1 }}</p>
+                            <p>{{ device.ip2 }}</p>
+                            <p>{{ device.devicetype.name }}</p>
+
+                            <p>{{ device.lan.name }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <p><b>Actions</b></p>
+                            <a href="#" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+                            <a href="{{ url_for('delete_device', device_id=device.id) }}" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i> Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% endfor %}
         </div>
         <div class="col-md-6">
@@ -21,11 +45,103 @@
                     {{ render_fk_field(device_form.devicetype, "Device Type") }}
                     {{ render_fk_field(device_form.lan, "Lan") }}
                     <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" name="btn" value="{{ device_form._prefix }}save-btn">
                             <span>Save</span>
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <div class="modal fade" id="device-devicetype-modal" tabindex="-1" role="dialog" aria-labelledby="devicetype-modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="devicetype-modal">Add a Device Type</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" method="post" action="">
+                            {{ devicetype_form.hidden_tag() }}
+                            {{ render_field(devicetype_form.name, "Name") }}
+                            {{ render_fk_field(devicetype_form.manufacturer, "Manufacturer", white=False) }}
+                            {{ render_fk_field(devicetype_form.devicetypecategory, "Device Category", white=False) }}
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary" name="btn" value="{{ devicetype_form._prefix }}save-btn">
+                                    <span>Save</span>
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="device-lan-modal" tabindex="-1" role="dialog" aria-labelledby="lan-modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="lan-modal">Add a Lan</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" method="post" action="">
+                            {{ lan_form.hidden_tag() }}
+                            {{ render_field(lan_form.name, "Name") }}
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary" name="btn" value="{{ lan_form._prefix }}save-btn">
+                                    <span>Save</span>
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="devicetype-devicetypecategory-modal" tabindex="-1" role="dialog" aria-labelledby="devicetype-modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="devicetype-modal">Add a Manufacturer</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" method="post" action="">
+                            {{ devicetypecategory_form.hidden_tag() }}
+                            {{ render_field(devicetypecategory_form.name, "Name") }}
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary" name="btn" value="{{ devicetypecategory_form._prefix }}save-btn">
+                                    <span>Save</span>
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="modal fade" id="devicetype-manufacturer-modal" tabindex="-1" role="dialog" aria-labelledby="devicetype-manufacturer-modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="devicetype-manufacturer-modal">Add a Manufacturer</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" method="post" action="">
+                            {{ manufacturer_form.hidden_tag() }}
+                            {{ render_field(manufacturer_form.name, "Name") }}
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary" name="btn" value="{{ manufacturer_form._prefix }}save-btn">
+                                    <span>Save</span>
+                                </button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

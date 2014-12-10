@@ -8,10 +8,12 @@ from app import app
 from app.forms import LoginForm, SettingsForm
 from app.models import User
 
+
 @app.route('/', methods=['GET'])
 @login_required
 def index():
     return render_template("index.html")
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -20,15 +22,19 @@ def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        if user.check_password("root"):
+            flash("You still use the default password. Please change it.")
         login_user(user)
         return redirect(url_for('index'))
     else:
         return render_template("login.html", form=form)
 
+
 @app.route('/logout', methods=['GET'])
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required

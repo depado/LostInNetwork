@@ -7,17 +7,17 @@
 </div>
 {% endmacro %}
 
-{% macro render_fk_field(field, label=None) %}
+{% macro render_fk_field(field, label=None, white=True) %}
 <div class="container-fluid" style="margin: 0px; padding: 0px;">
     <div class="row">
         <div class="col-md-3">
-            <label class="control-label" style="color: rgba(255,255,255,1);">{{ label }}</label>
+            <label class="control-label" {% if white %}style="color: rgba(255,255,255,1);"{% endif %}>{{ label }}</label>
         </div>
         <div class="col-md-6">
             {{ field(class="form-control") }}
         </div>
         <div class="col-md-3">
-            <a href="#" class="btn btn-primary">New {{ label }}</a>
+            <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#{{ field.name }}-modal"><i class="glyphicon glyphicon-plus"></i> New</a>
         </div>
     </div>
 </div>

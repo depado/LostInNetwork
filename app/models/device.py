@@ -13,6 +13,13 @@ class DeviceTypeCategory(db.Model):
 
     devicetypes = db.relationship('DeviceType', backref='devicetypecategory', lazy='dynamic')
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return self.name
+
 
 class DeviceType(db.Model):
     """
@@ -26,6 +33,17 @@ class DeviceType(db.Model):
     devicetypecategory_id = db.Column(db.Integer, db.ForeignKey('device_type_category.id'))
 
     devices = db.relationship('Device', backref='devicetype', lazy='dynamic')
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return self.name
 
 
 # Many to Manu Relationship between Risk and Device
@@ -54,4 +72,15 @@ class Device(db.Model):
     devicetype_id = db.Column(db.Integer, db.ForeignKey('device_type.id'))
 
     risks = db.relationship('Risk', secondary=device_risks, backref=db.backref('pages', lazy='dynamic'))
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return self.name
 
