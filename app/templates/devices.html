@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% from "bootstrap_form_helper.html" import render_field, render_fk_field %}
+{% from "button_helpers.html" import render_device_action_button %}
 
 {% block content %}
 {% include 'menu.html' %}
@@ -8,26 +9,21 @@
         <div class="col-md-6">
             {% for device in devices %}
             <div class="well white transparent" style="padding-top: 5px; padding-bottom: 5px;">
+            <span class="pull-right">{{ render_device_action_button(device) }}</span>
                 <p style="text-align: center"><b>{{device.name}}</b></p>
                 <div class="container-fluid" style="margin: 0px; padding: 0px;">
                     <div class="row">
                         <div class="col-md-3">
                             <p>First IP</p>
-                            <p>Secondary IP</p>
+                            {% if device.ip2 %}<p>Secondary IP</p>{% endif %}
                             <p>Device Type</p>
                             <p>Lan</p>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-9">
                             <p>{{ device.ip1 }}</p>
-                            <p>{{ device.ip2 }}</p>
+                            {% if device.ip2 %}<p>{{ device.ip2 }}</p>{% endif %}
                             <p>{{ device.devicetype.name }}</p>
-
                             <p>{{ device.lan.name }}</p>
-                        </div>
-                        <div class="col-md-3">
-                            <p><b>Actions</b></p>
-                            <a href="#" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                            <a href="{{ url_for('delete_device', device_id=device.id) }}" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-remove"></i> Delete</a>
                         </div>
                     </div>
                 </div>

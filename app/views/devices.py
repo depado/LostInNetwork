@@ -74,10 +74,24 @@ def devices():
                            devicetype_form=devicetype_form, devicetypecategory_form=devicetypecategory_form,
                            lan_form=lan_form, manufacturer_form=manufacturer_form, active_page="devices")
 
-@app.route("/devices/delete/<int:device_id>")
+@app.route("/devices/delete/<int:device_id>", methods=['GET'])
 def delete_device(device_id):
     device = Device.query.filter_by(id=device_id).first_or_404()
-    device.delete()
-    flash("Successfully deleted the Device.", "info")
+    if device.delete():
+        flash("Successfully deleted the Device.", "info")
+    else:
+        flash("Something went wrong.", "error")
     return redirect(url_for('devices'))
 
+@app.route("/devices/edit/<int:device_id>", methods=['GET', 'POST'])
+def edit_device(device_id):
+    device = Device.query.filter_by(id=device_id).first_or_404()
+    form = DeviceForm(obj=device)
+    if form.validate_on_submit():
+        form.populate_obj(device)
+        if device.save():
+            flash("Device successfully edited.", "info")
+        else:
+            flash("Something went wrong.", "error")
+        return redirect(url_for('devices'))
+    return render_template("edit_device.html", form=form, active_page="devices")
