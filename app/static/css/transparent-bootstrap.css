@@ -8,6 +8,10 @@ body {
     padding-bottom: 0px; 
 }
 
+.modal-form {
+  padding: 30px;
+}
+
 .setting {
     padding: 30px; 
 }
