@@ -12,6 +12,8 @@ from app.models import User
 @app.route('/', methods=['GET'])
 @login_required
 def index():
+    if current_user.check_password("root"):
+        flash("You still use the default password. Please change it.")
     return render_template("index.html")
 
 
@@ -22,8 +24,6 @@ def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user.check_password("root"):
-            flash("You still use the default password. Please change it.")
         login_user(user)
         return redirect(url_for('index'))
     else:
@@ -47,4 +47,4 @@ def settings():
             flash("Successfully set new password")
         return redirect(url_for('settings'))
     else:
-        return render_template("settings.html", form=form)
+        return render_template("settings.html", form=form, active_page="settings")

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required
 
 from app import app
@@ -33,35 +33,41 @@ def devices():
                 device = Device(name=device_form.name.data, ip1=device_form.ip1.data, ip2=device_form.ip2.data,
                                 devicetype=device_form.devicetype.data, lan=device_form.lan.data)
                 device.save()
+                flash("Successfully created the Device.")
 
         elif has_clicked(request, devicetype_form):
             if devicetype_form.validate_on_submit():
                 devicetype = DeviceType(name=devicetype_form.name.data, manufacturer=devicetype_form.manufacturer.data,
                                         devicetypecategory=devicetype_form.devicetypecategory.data)
                 devicetype.save()
+                flash("Successfully created the Device Type.")
 
         elif has_clicked(request, devicetypecategory_form):
             if devicetypecategory_form.validate_on_submit():
                 devicetypecategory = DeviceTypeCategory(name=devicetypecategory_form.name.data)
                 devicetypecategory.save()
+                flash("Successfully created the Device Type Category.")
 
         elif has_clicked(request, lan_form):
             if lan_form.validate_on_submit():
                 lan = Lan(name=lan_form.name.data)
                 lan.save()
+                flash("Successfully created the Lan.")
 
         elif has_clicked(request, manufacturer_form):
             if manufacturer_form.validate_on_submit():
                 manufacturer = Manufacturer(name=manufacturer_form.name.data)
                 manufacturer.save()
+                flash("Successfully created the Manufacturer.")
 
     return render_template('devices.html', devices=Device.query.all(), device_form=device_form,
                            devicetype_form=devicetype_form, devicetypecategory_form=devicetypecategory_form,
-                           lan_form=lan_form, manufacturer_form=manufacturer_form)
+                           lan_form=lan_form, manufacturer_form=manufacturer_form, active_page="devices")
 
 @app.route("/devices/delete/<int:device_id>")
 def delete_device(device_id):
     device = Device.query.filter_by(id=device_id).first_or_404()
     device.delete()
+    flash("Successfully deleted the Device.")
     return redirect(url_for('devices'))
 
