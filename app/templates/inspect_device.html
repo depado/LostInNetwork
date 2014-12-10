@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% from "bootstrap_form_helper.html" import render_field, render_fk_field %}
+
+{% block content %}
+{% include 'menu.html' %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="well setting transparent white">
+            <ul>
+                <li><b>Device</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                <ul>
+                    <li><b>ID</b> : {{ device.id }}</li>
+                    <li><b>Name</b> : {{ device.name }}</li>
+                    <li><b>IP</b> : {{ device.ip1 }}</li>
+                    <li><b>Secondary IP (optional)</b> : {% if device.ip2 %}{{ device.ip2 }}{% else %}None{% endif %}</li>
+                    <li><b>Last Modification</b> : {{ device.date }}</li>
+                    <li><b>Password</b> : Should we really show that ?</li>
+                    <li><b>Lan</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                    <ul>
+                        <li><b>ID</b> : {{ device.lan.id }}</li>
+                        <li><b>Name</b> : {{ device.lan.name }}</li>
+                    </ul>
+                    <li><b>Device Type</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                    <ul>
+                        <li><b>ID</b> : {{ device.devicetype.id }}</li>
+                        <li><b>Name</b> : {{ device.devicetype.name }}</li>
+                        <li><b>Manufacturer</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <ul>
+                            <li><b>ID</b> : {{ device.devicetype.manufacturer.id }}</li>
+                            <li><b>Name</b> : {{ device.devicetype.manufacturer.name }}</li>
+                        </ul>
+                        <li><b>Device Type Category</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <ul>
+                            <li><b>ID</b> : {{ device.devicetype.devicetypecategory.id }}</li>
+                            <li><b>Name</b> : {{ device.devicetype.devicetypecategory.name }}</li>
+                        </ul>
+                    </ul>
+                </ul>
+            </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

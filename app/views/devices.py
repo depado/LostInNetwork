@@ -16,7 +16,7 @@ def has_clicked(req, form):
     :param form: The form that may have been submitted or not
     :return: True if form has been submitted, False otherwise
     """
-    return req.form['btn'] == "{prefix}save-btn".format(prefix=form._prefix)
+    return req.form['btn'] == "{}save-btn".format(getattr(form, "_prefix"))
 
 
 def push_new_from_form(model, form):
@@ -94,3 +94,10 @@ def edit_device(device_id):
             flash("Something went wrong.", "error")
         return redirect(url_for('devices'))
     return render_template("edit_device.html", form=form, active_page="devices")
+
+
+@app.route("/devices/inspect/<int:device_id>", methods=['GET', 'POST'])
+@login_required
+def inspect_device(device_id):
+    device = Device.query.filter_by(id=device_id).first_or_404()
+    return render_template("inspect_device.html", device=device, active_page="devices")
