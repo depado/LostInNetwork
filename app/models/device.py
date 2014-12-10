@@ -73,6 +73,7 @@ class Device(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
+    method = db.Column(db.String(50))
     ip1 = db.Column(db.String(50))
     ip2 = db.Column(db.String(50))
     date = db.Column(db.DateTime())
