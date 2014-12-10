@@ -15,7 +15,12 @@ class DeviceTypeCategory(db.Model):
 
     def save(self):
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return False
+        return True
 
     def __repr__(self):
         return self.name
@@ -36,7 +41,12 @@ class DeviceType(db.Model):
 
     def save(self):
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return False
+        return True
 
     def delete(self):
         db.session.delete(self)
@@ -75,7 +85,12 @@ class Device(db.Model):
 
     def save(self):
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return False
+        return True
 
     def delete(self):
         db.session.delete(self)

@@ -13,7 +13,12 @@ class Lan(db.Model):
 
     def save(self):
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return False
+        return True
 
     def __repr__(self):
         return self.name
