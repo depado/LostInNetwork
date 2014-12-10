@@ -13,7 +13,7 @@ from app.models import User
 @login_required
 def index():
     if current_user.check_password("root"):
-        flash("You still use the default password. Please change it.")
+        flash("You still use the default password. Please change it.", "info")
     return render_template("index.html")
 
 
@@ -44,7 +44,7 @@ def settings():
         if form.newpassword.data and form.oldpassword.data and form.repeat.data:
             current_user.set_password(form.newpassword.data)
             current_user.save()
-            flash("Successfully set new password")
+            flash("Successfully set new password", "info")
         return redirect(url_for('settings'))
     else:
         return render_template("settings.html", form=form, active_page="settings")

@@ -36,8 +36,12 @@
           extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
           theme: 'ice'
         }
-        {% with messages = get_flashed_messages() %}{% if messages %}{% for message in messages %}
-        Messenger().post("{{message}}");
+        {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}
+        Messenger().post({
+          message: "{{message}}",
+          category: "{{category}}",
+          showCloseButton: true
+        });
         {% endfor %}{% endif %}{% endwith %}
     </script>
   </body>

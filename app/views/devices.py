@@ -33,42 +33,42 @@ def devices():
                 device = Device(name=device_form.name.data, ip1=device_form.ip1.data, ip2=device_form.ip2.data,
                                 devicetype=device_form.devicetype.data, lan=device_form.lan.data)
                 if device.save():
-                    flash("Successfully created the Device.")
+                    flash("Successfully created the Device.", "info")
                 else:
-                    flash("Something went wrong.")
+                    flash("Something went wrong.", "error")
 
         elif has_clicked(request, devicetype_form):
             if devicetype_form.validate_on_submit():
                 devicetype = DeviceType(name=devicetype_form.name.data, manufacturer=devicetype_form.manufacturer.data,
                                         devicetypecategory=devicetype_form.devicetypecategory.data)
                 if devicetype.save():
-                    flash("Successfully created the Device Type.")
+                    flash("Successfully created the Device Type.", "info")
                 else:
-                    flash("Something went wrong.")
+                    flash("Something went wrong.", "error")
 
         elif has_clicked(request, devicetypecategory_form):
             if devicetypecategory_form.validate_on_submit():
                 devicetypecategory = DeviceTypeCategory(name=devicetypecategory_form.name.data)
                 if devicetypecategory.save():
-                    flash("Successfully created the Device Type Category.")
+                    flash("Successfully created the Device Type Category.", "info")
                 else:
-                    flash("Something went wrong.")
+                    flash("Something went wrong.", "error")
 
         elif has_clicked(request, lan_form):
             if lan_form.validate_on_submit():
                 lan = Lan(name=lan_form.name.data)
                 if lan.save():
-                    flash("Successfully created the Lan.")
+                    flash("Successfully created the Lan.", "info")
                 else:
-                    flash("Something went wrong.")
+                    flash("Something went wrong.", "error")
 
         elif has_clicked(request, manufacturer_form):
             if manufacturer_form.validate_on_submit():
                 manufacturer = Manufacturer(name=manufacturer_form.name.data)
                 if manufacturer.save():
-                    flash("Successfully created the Manufacturer.")
+                    flash("Successfully created the Manufacturer.", "info")
                 else:
-                    flash("Something went wrong.")
+                    flash("Something went wrong.", "error")
 
     return render_template('devices.html', devices=Device.query.all(), device_form=device_form,
                            devicetype_form=devicetype_form, devicetypecategory_form=devicetypecategory_form,
@@ -78,6 +78,6 @@ def devices():
 def delete_device(device_id):
     device = Device.query.filter_by(id=device_id).first_or_404()
     device.delete()
-    flash("Successfully deleted the Device.")
+    flash("Successfully deleted the Device.", "info")
     return redirect(url_for('devices'))
 
