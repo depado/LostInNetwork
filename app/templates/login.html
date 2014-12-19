@@ -12,8 +12,8 @@
             <form class="form-horizontal" method="post" action="">
               <legend class="clear-legend">Login</legend>
               {{ form.hidden_tag() }}
-              {{ render_field(form.username, placeholder="Username") }}
-              {{ render_field(form.password, placeholder="Password") }}
+              {{ render_field(form.username) }}
+              {{ render_field(form.password) }}
               <div class="form-group text-center">
                 <button type="submit" class="btn btn-primary">
                   <span>Login</span>

@@ -9,9 +9,9 @@ from wtforms.validators import ValidationError
 
 
 class SettingsForm(Form):
-    oldpassword = PasswordField('old password')
-    newpassword = PasswordField('new password')
-    repeat = PasswordField('repeat password')
+    oldpassword = PasswordField('old password', description={'placeholder': "Old Password"})
+    newpassword = PasswordField('new password', description={'placeholder': "New Password"})
+    repeat = PasswordField('repeat password', description={'placeholder': "Repeat New Password"})
 
     def validate_oldpassword(self, field):
         if self.oldpassword.data:

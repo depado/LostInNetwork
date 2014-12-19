@@ -8,17 +8,6 @@ from app.forms import DeviceForm, DeviceTypeForm, DeviceTypeCategoryForm, LanFor
 from app.models import Device, DeviceType, DeviceTypeCategory, Lan, Manufacturer
 
 
-def has_clicked(req, form):
-    """
-    Returns whether it was this form or not that was submitted.
-
-    :param req: The flask request of the route
-    :param form: The form that may have been submitted or not
-    :return: True if form has been submitted, False otherwise
-    """
-    return req.form['btn'] == "{}save-btn".format(getattr(form, "_prefix"))
-
-
 def push_new_from_form(model, form):
     """
     Automatically create the object and save it from the data in the form.
@@ -38,6 +27,17 @@ def push_new_from_form(model, form):
 @app.route('/devices', methods=['GET', 'POST'])
 @login_required
 def devices():
+    """
+    The devices view. Displays a list of available devices, as well as the forms to add a new one.
+    As this view contains many forms, there is a mechanism to display them all and get only the one submitted.
+    Example :
+    In template :
+        <button type="submit" class="btn btn-primary" name="btn" value="{{ device_form._prefix }}save-btn">
+            <span>Save</span>
+        </button>
+    The value will be : 
+        device-save-btn
+    """
     lan_form = LanForm(prefix="lan")
     device_form = DeviceForm(prefix="device")
     devicetype_form = DeviceTypeForm(prefix="devicetype")
@@ -45,25 +45,12 @@ def devices():
     manufacturer_form = ManufacturerForm(prefix="manufacturer")
 
     if request.method == 'POST':
-        if has_clicked(request, device_form):
-            if device_form.validate_on_submit():
-                push_new_from_form(Device, device_form)
+        device_form.chain_push_new(request=request, model=Device)
+        devicetype_form.chain_push_new(request=request, model=DeviceType)
+        devicetypecategory_form.chain_push_new(request=request, model=DeviceTypeCategory)
 
-        elif has_clicked(request, devicetype_form):
-            if devicetype_form.validate_on_submit():
-                push_new_from_form(DeviceType, devicetype_form)
-
-        elif has_clicked(request, devicetypecategory_form):
-            if devicetypecategory_form.validate_on_submit():
-                push_new_from_form(DeviceTypeCategory, devicetypecategory_form)
-
-        elif has_clicked(request, lan_form):
-            if lan_form.validate_on_submit():
-                push_new_from_form(Lan, lan_form)
-
-        elif has_clicked(request, manufacturer_form):
-            if manufacturer_form.validate_on_submit():
-                push_new_from_form(Manufacturer, manufacturer_form)
+        lan_form.chain_push_new(request=request, model=Lan)
+        manufacturer_form.chain_push_new(request=request, model=Manufacturer)
 
     return render_template('devices.html', devices=Device.query.all(), device_form=device_form,
                            devicetype_form=devicetype_form, devicetypecategory_form=devicetypecategory_form,
@@ -73,6 +60,13 @@ def devices():
 @app.route("/devices/delete/<int:device_id>", methods=['GET'])
 @login_required
 def delete_device(device_id):
+    """
+    View to delete a device. This doesn't render a template.
+    This behaviour may be changed to display a template with an option to cascade delete all the
+    related items (foreign keys and stuff like that).
+
+    :param device_id: The ID of the device to be deleted.
+    """
     device = Device.query.filter_by(id=device_id).first_or_404()
     if device.delete():
         flash("Successfully deleted the Device.", "info")

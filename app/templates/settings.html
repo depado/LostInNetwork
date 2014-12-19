@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from "bootstrap_form_helper.html" import render_field %}
+{% from "bootstrap_form_helper.html" import render_form %}
 
 {% block content %}
 {% include 'menu.html' %}
@@ -8,18 +8,7 @@
     <div class="row">
       <div class="col-md-4">
         <div class="well setting transparent">
-            <form class="form-horizontal" method="post" action="">
-              <legend class="clear-legend">Change Password</legend>
-              {{ form.hidden_tag() }}
-              {{ render_field(form.oldpassword, placeholder="Old Password") }}
-              {{ render_field(form.newpassword, placeholder="New Password") }}
-              {{ render_field(form.repeat, placeholder="Repeat New Password") }}
-              <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary">
-                  <span>Save</span>
-                </button>
-              </div>
-            </form>
+          {{ render_form(form, legend="Change Password") }}
         </div>
       </div>
     </div>

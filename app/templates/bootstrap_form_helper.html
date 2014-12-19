@@ -1,17 +1,17 @@
-{% macro render_field(field, placeholder=None) %}
+{% macro render_field(field) %}
 <div class="form-group {% if field.errors %}has-error{% endif %}">
   {% if field.errors %}{% for err in field.errors %}
   <label class="control-label">{{ err }}</label>
   {% endfor %}{% endif %}
-  {{ field(class="form-control", placeholder=placeholder) }}
+  {{ field(class="form-control", placeholder=field.description.placeholder) }}
 </div>
 {% endmacro %}
 
-{% macro render_fk_field(field, label=None, white=True, add_button=True) %}
+{% macro render_fk_field(field, white=True, add_button=True) %}
 <div class="container-fluid" style="margin: 0px; padding: 0px;">
     <div class="row">
         <div class="col-md-3">
-            <label class="control-label" {% if white %}style="color: rgba(255,255,255,1);"{% endif %}>{{ label }}</label>
+            <label class="control-label" {% if white %}style="color: rgba(255,255,255,1);"{% endif %}>{{ field.description.label }}</label>
         </div>
         <div class="col-md-{% if add_button %}6{% else %}9{% endif %}">
             {{ field(class="form-control") }}
@@ -24,4 +24,42 @@
     </div>
 </div>
 <br />
+{% endmacro %}
+
+{% macro render_form(form, add_mode=True, white=False, cancel_button=False, legend=None) %}
+<form class="form-horizontal" method="post" action="">
+    {% if legend %}<legend class="clear-legend">{{ legend }}</legend>{% endif %}
+    {{ form.hidden_tag() }}
+    {% for field in form %}
+        {% if "label" in field.description %}
+            {{ render_fk_field(field, white=white, add_button=add_mode) }}
+        {% elif "placeholder" in field.description %}
+            {{ render_field(field) }}
+        {% endif %}
+    {% endfor %}
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary" name="btn" value="{{ form._prefix }}save-btn">
+            <span>Save</span>
+        </button>
+        {% if cancel_button %}
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        {% endif %}
+    </div>
+</form>
+{% endmacro %}
+
+{% macro render_form_in_modal(form, referer_field, add_mode=True) %}
+<div class="modal fade" id="{{ referer_field.name }}-modal" tabindex="-1" role="dialog" aria-labelledby="devicetype-modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Add a {{ referer_field.description.label }}</h4>
+            </div>
+            <div class="modal-body modal-form">
+                {{ render_form(form, white=False, cancel_button=True, add_mode=add_mode) }}
+            </div>
+        </div>
+    </div>
+</div>
 {% endmacro %}
