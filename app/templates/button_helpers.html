@@ -7,7 +7,23 @@
     <li><a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-pencil"></i> Edit</a></li>
     <li><a href="{{ url_for('inspect_device', device_id=device.id) }}"><i class="glyphicon glyphicon-search"></i> Inspect</a></li>
     <li role="presentation" class="divider"></li>
-    <li><a href="{{ url_for('delete_device', device_id=device.id) }}"><i class="glyphicon glyphicon-remove"></i> Delete</a></li>
+    <li><a href="#" id="delete-device-button"><i class="glyphicon glyphicon-remove"></i> Delete</a></li>
   </ul>
 </div>
+<script type="text/javascript">
+	$("#delete-device-button").click(function () {
+		swal({
+		  title: "Are you sure?",
+		  text: "This will delete the device permanently.",
+		  type: "warning",
+		  showCancelButton: true,
+		  confirmButtonColor: "#DD6B55",
+		  confirmButtonText: "Yes",
+		  closeOnConfirm: false
+		},
+		function(){
+		  location.href="{{ url_for('delete_device', device_id=device.id) }}";
+		});
+	});
+</script>
 {% endmacro %}

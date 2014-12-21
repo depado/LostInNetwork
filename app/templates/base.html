@@ -7,16 +7,18 @@
     <title>LostInNetwork</title>
 
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='bower_components/messenger/build/css/messenger.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='bower_components/messenger/build/css/messenger-theme-ice.css') }}" rel="stylesheet">
-    
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/messenger.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/messenger-theme-ice.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/transparent-bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/sweet-alert.css') }}" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-
-    <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sweet-alert.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/messenger.min.js') }}"></script>
 
     <style type="text/css">
       body {
@@ -29,7 +31,6 @@
   </head>
   <body>
     {% block content %}{% endblock %}
-    <script src="{{ url_for('static', filename='bower_components/messenger/build/js/messenger.min.js') }}"></script>
     <script type="text/javascript">
         Messenger.options = {
           extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
