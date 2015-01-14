@@ -7,37 +7,51 @@
     <div class="row">
         <div class="col-md-6">
             <div class="well setting transparent white">
-            <ul>
-                <li><b>Device</b> <a href="#" id="show_device_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                <legend class="clear-legend">Inspect and Edit {{ device.name }}</legend>
                 <ul>
-                    <li><b>ID</b> : {{ device.id }}</li>
-                    <li><b>Name</b> : {{ device.name }}</li>
-                    <li><b>IP</b> : {{ device.ip1 }}</li>
-                    <li><b>Secondary IP (optional)</b> : {% if device.ip2 %}{{ device.ip2 }}{% else %}None{% endif %}</li>
-                    <li><b>Last Modification</b> : {{ device.date }}</li>
-                    <li><b>Password</b> : Should we really show that ?</li>
-                    <li><b>Lan</b> <a href="#" id="show_lan_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                    <li><b>Device</b> <a href="#" id="show_device_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                     <ul>
-                        <li><b>ID</b> : {{ device.lan.id }}</li>
-                        <li><b>Name</b> : {{ device.lan.name }}</li>
-                    </ul>
-                    <li><b>Device Type</b> <a href="#" id="show_devicetype_button"><i class="glyphicon glyphicon-cog"></i></a></li>
-                    <ul>
-                        <li><b>ID</b> : {{ device.devicetype.id }}</li>
-                        <li><b>Name</b> : {{ device.devicetype.name }}</li>
-                        <li><b>Manufacturer</b> <a href="#" id="show_manufacturer_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <li><b>ID</b> : {{ device.id }}</li>
+                        <li><b>Name</b> : {{ device.name }}</li>
+                        <li><b>IP</b> : {{ device.ip1 }}</li>
+                        <li><b>Secondary IP (optional)</b> : {% if device.ip2 %}{{ device.ip2 }}{% else %}None{% endif %}</li>
+                        <li><b>Last Modification</b> : {{ device.date }}</li>
+                        <li><b>Password</b> : Should we really show that ?</li>
+                        <li><b>Lan</b> <a href="#" id="show_lan_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                         <ul>
-                            <li><b>ID</b> : {{ device.devicetype.manufacturer.id }}</li>
-                            <li><b>Name</b> : {{ device.devicetype.manufacturer.name }}</li>
+                            <li><b>ID</b> : {{ device.lan.id }}</li>
+                            <li><b>Name</b> : {{ device.lan.name }}</li>
                         </ul>
-                        <li><b>Device Type Category</b> <a href="#" id="show_devicetypecategory_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <li><b>Device Type</b> <a href="#" id="show_devicetype_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                         <ul>
-                            <li><b>ID</b> : {{ device.devicetype.devicetypecategory.id }}</li>
-                            <li><b>Name</b> : {{ device.devicetype.devicetypecategory.name }}</li>
+                            <li><b>ID</b> : {{ device.devicetype.id }}</li>
+                            <li><b>Name</b> : {{ device.devicetype.name }}</li>
+                            <li><b>Manufacturer</b> <a href="#" id="show_manufacturer_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                            <ul>
+                                <li><b>ID</b> : {{ device.devicetype.manufacturer.id }}</li>
+                                <li><b>Name</b> : {{ device.devicetype.manufacturer.name }}</li>
+                            </ul>
+                            <li><b>Device Type Category</b> <a href="#" id="show_devicetypecategory_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                            <ul>
+                                <li><b>ID</b> : {{ device.devicetype.devicetypecategory.id }}</li>
+                                <li><b>Name</b> : {{ device.devicetype.devicetypecategory.name }}</li>
+                            </ul>
                         </ul>
                     </ul>
                 </ul>
-            </ul>
+                <a href="#" id="display-summary">Show/Hide Summary</a>
+            </div>
+            <div class="well setting transparent white" id="summary" style="display: none;">
+                <legend class="clear-legend">Summary of the Device</legend>
+                <ul>
+                    <li><b>Name</b> : {{ device.name }}</li>
+                    <li><b>IP</b> : {{ device.ip1 }}</li>
+                    <li><b>Secondary IP (optional)</b> : {% if device.ip2 %}{{ device.ip2 }}{% else %}None{% endif %}</li>
+                    <li><b>Lan</b> : {{ device.lan.name }}</li>
+                    <li><b>Device Type</b> : {{ device.devicetype.name }}</li>
+                    <li><b>Device Type Category</b> : {{ device.devicetype.devicetypecategory.name }}</li>
+                    <li><b>Manufacturer</b> : {{ device.devicetype.manufacturer.name }}</li>
+                </ul>
             </div>
         </div>
         <div class="col-md-6">
@@ -85,6 +99,9 @@
     });
     $("#show_devicetypecategory_button").click(function () {
         slide_callback('#{{ devicetypecategory_form._prefix }}form-hidden');
+    });
+    $("#display-summary").click(function () {
+        $("#summary").slideToggle(200);
     });
 </script>
 {% endblock %}
