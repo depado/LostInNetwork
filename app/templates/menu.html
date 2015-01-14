@@ -5,6 +5,9 @@
             <p>LostInNetwork</p>
           </a>
         </div>
+        <ul class="nav navbar-nav">
+            <li><a href="//github.com/Depado/LostInNetwork" class="white"><i class="fa fa-github fa-lg"></i></a></li>
+        </ul>
         <ul class="nav navbar-nav pull-right">
             <li {% if active_page == "devices" %}class="active"{% endif %}><a href="{{ url_for('devices') }}">Devices</a></li>
             <li {% if active_page == "settings" %}class="active"{% endif %}><a href="{{ url_for('settings') }}">Settings</a></li>
