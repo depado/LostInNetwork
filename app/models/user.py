@@ -15,6 +15,8 @@ class User(db.Model):
     A simple user model with permission handling and password hash.
     Implements two methods to set the password and check the password.
     """
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(54))

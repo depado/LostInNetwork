@@ -125,3 +125,18 @@
     border:1px solid #94a0b4;
     color:#000
 }
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 35px;
+  padding: 5px;
+  color: #9D9D9D;
+  background: rgba(0,0,0,0.1);
+}
+
+a:hover {
+    color: #FFFFFF;
+}

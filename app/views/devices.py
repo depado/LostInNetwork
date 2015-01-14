@@ -83,7 +83,8 @@ def inspect_device(device_id):
     if request.method == 'POST':
         device_form.chain_push_modified(request=request, model=Device, obj=device)
         devicetype_form.chain_push_modified(request=request, model=DeviceType, obj=devicetype)
-        devicetypecategory_form.chain_push_modified(request=request, model=DeviceTypeCategory, obj=devicetype.devicetypecategory)
+        devicetypecategory_form.chain_push_modified(request=request, model=DeviceTypeCategory,
+                                                    obj=devicetype.devicetypecategory)
         manufacturer_form.chain_push_modified(request=request, model=Manufacturer, obj=devicetype.manufacturer)
         lan_form.chain_push_modified(request=request, model=Lan, obj=device.lan)
 

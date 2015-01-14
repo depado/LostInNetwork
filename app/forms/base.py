@@ -32,7 +32,7 @@ class CustomForm(Form):
         else:
             flash("Something went wrong.", "error")
 
-    def push_modified(self, request, obj):
+    def push_modified(self, obj):
         """
         Push a modified object to the database.
         The condition is used to determine if it's a many-to-many field. As we don't handle those on the front-end,
@@ -69,4 +69,4 @@ class CustomForm(Form):
         """
         if self.has_been_submitted(request):
             if self.validate_on_submit():
-                self.push_modified(model, obj)
+                self.push_modified(obj)
