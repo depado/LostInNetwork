@@ -8,22 +8,6 @@ from app.forms import DeviceForm, DeviceTypeForm, DeviceTypeCategoryForm, LanFor
 from app.models import Device, DeviceType, DeviceTypeCategory, Lan, Manufacturer
 
 
-def push_new_from_form(model, form):
-    """
-    Automatically create the object and save it from the data in the form.
-    Automatic rollback of the database in case of error.
-
-    :param model: The model associated to the form.
-    :param form: The form with data inside.
-    """
-    instance = model()
-    form.populate_obj(instance)
-    if instance.save():
-        flash("{} created and saved.".format(getattr(instance, "friendly_name", instance.__class__.__name__)), "info")
-    else:
-        flash("Something went wrong.", "error")
-
-
 @app.route('/devices', methods=['GET', 'POST'])
 @login_required
 def devices():
@@ -43,6 +27,9 @@ def devices():
     devicetype_form = DeviceTypeForm(prefix="devicetype")
     devicetypecategory_form = DeviceTypeCategoryForm(prefix="devicetypecategory")
     manufacturer_form = ManufacturerForm(prefix="manufacturer")
+    form_dict = dict(lan_form=lan_form, device_form=device_form, devicetype_form=devicetype_form,
+                     devicetypecategory_form=devicetypecategory_form,
+                     manufacturer_form=manufacturer_form)
 
     if request.method == 'POST':
         device_form.chain_push_new(request=request, model=Device)
@@ -52,11 +39,7 @@ def devices():
         lan_form.chain_push_new(request=request, model=Lan)
         manufacturer_form.chain_push_new(request=request, model=Manufacturer)
 
-    form_dict = dict(lan_form=lan_form, device_form=device_form, devicetype_form=devicetype_form,
-                     devicetypecategory_form=devicetypecategory_form, 
-                     manufacturer_form=manufacturer_form)
-
-    return render_template('devices.html', devices=Device.query.all(), **form_dict)
+    return render_template('devices.html', devices=Device.query.all(), active_page="devices", **form_dict)
 
 
 @app.route("/devices/delete/<int:device_id>", methods=['GET'])
@@ -77,24 +60,6 @@ def delete_device(device_id):
     return redirect(url_for('devices'))
 
 
-@app.route("/devices/edit/<int:device_id>", methods=['GET', 'POST'])
-@login_required
-def edit_device(device_id):
-    """
-    Edit a device
-    """
-    device = Device.query.filter_by(id=device_id).first_or_404()
-    form = DeviceForm(obj=device)
-    if form.validate_on_submit():
-        form.populate_obj(device)
-        if device.save():
-            flash("Device successfully edited.", "info")
-        else:
-            flash("Something went wrong.", "error")
-        return redirect(url_for('devices'))
-    return render_template("edit_device.html", form=form, active_page="devices")
-
-
 @app.route("/devices/inspect/<int:device_id>", methods=['GET', 'POST'])
 @login_required
 def inspect_device(device_id):
@@ -103,9 +68,35 @@ def inspect_device(device_id):
     """
     device = Device.query.filter_by(id=device_id).first_or_404()
     devicetype = device.devicetype
-    lan_form = LanForm(prefix="lan", obj=device.lan)
+
     device_form = DeviceForm(prefix="device", obj=device)
     devicetype_form = DeviceTypeForm(prefix="devicetype", obj=devicetype)
     devicetypecategory_form = DeviceTypeCategoryForm(prefix="devicetypecategory", obj=devicetype.devicetypecategory)
+    lan_form = LanForm(prefix="lan", obj=device.lan)
     manufacturer_form = ManufacturerForm(prefix="manufacturer", obj=devicetype.manufacturer)
-    return render_template("inspect_device.html", device=device, active_page="devices")
+
+    new_lan_form = LanForm(prefix="new-lan")
+    new_devicetype_form = DeviceTypeForm(prefix="new-devicetype")
+    new_devicetypecategory_form = DeviceTypeCategoryForm(prefix="new-devicetypecategory")
+    new_manufacturer_form = ManufacturerForm(prefix="new-manufacturer")
+
+    if request.method == 'POST':
+        device_form.chain_push_modified(request=request, model=Device, obj=device)
+        devicetype_form.chain_push_modified(request=request, model=DeviceType, obj=devicetype)
+        devicetypecategory_form.chain_push_modified(request=request, model=DeviceTypeCategory, obj=devicetype.devicetypecategory)
+        manufacturer_form.chain_push_modified(request=request, model=Manufacturer, obj=devicetype.manufacturer)
+        lan_form.chain_push_modified(request=request, model=Lan, obj=device.lan)
+
+        new_devicetype_form.chain_push_new(request=request, model=DeviceType)
+        new_devicetypecategory_form.chain_push_new(request=request, model=DeviceTypeCategory)
+        new_lan_form.chain_push_new(request=request, model=Lan)
+        new_manufacturer_form.chain_push_new(request=request, model=Manufacturer)
+
+    form_dict = dict(lan_form=lan_form, device_form=device_form, devicetype_form=devicetype_form,
+                     devicetypecategory_form=devicetypecategory_form,
+                     manufacturer_form=manufacturer_form, new_lan_form=new_lan_form,
+                     new_devicetype_form=new_devicetype_form,
+                     new_manufacturer_form=new_manufacturer_form,
+                     new_devicetypecategory_form=new_devicetypecategory_form)
+
+    return render_template("inspect_device.html", device=device, active_page="devices", **form_dict)

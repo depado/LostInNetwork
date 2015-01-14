@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% from "bootstrap_form_helper.html" import render_field, render_fk_field %}
+{% from "bootstrap_form_helper.html" import render_form, render_form_in_modal %}
 
 {% block content %}
 {% include 'menu.html' %}
@@ -8,7 +8,7 @@
         <div class="col-md-6">
             <div class="well setting transparent white">
             <ul>
-                <li><b>Device</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                <li><b>Device</b> <a href="#" id="show_device_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                 <ul>
                     <li><b>ID</b> : {{ device.id }}</li>
                     <li><b>Name</b> : {{ device.name }}</li>
@@ -16,21 +16,21 @@
                     <li><b>Secondary IP (optional)</b> : {% if device.ip2 %}{{ device.ip2 }}{% else %}None{% endif %}</li>
                     <li><b>Last Modification</b> : {{ device.date }}</li>
                     <li><b>Password</b> : Should we really show that ?</li>
-                    <li><b>Lan</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                    <li><b>Lan</b> <a href="#" id="show_lan_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                     <ul>
                         <li><b>ID</b> : {{ device.lan.id }}</li>
                         <li><b>Name</b> : {{ device.lan.name }}</li>
                     </ul>
-                    <li><b>Device Type</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                    <li><b>Device Type</b> <a href="#" id="show_devicetype_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                     <ul>
                         <li><b>ID</b> : {{ device.devicetype.id }}</li>
                         <li><b>Name</b> : {{ device.devicetype.name }}</li>
-                        <li><b>Manufacturer</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <li><b>Manufacturer</b> <a href="#" id="show_manufacturer_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                         <ul>
                             <li><b>ID</b> : {{ device.devicetype.manufacturer.id }}</li>
                             <li><b>Name</b> : {{ device.devicetype.manufacturer.name }}</li>
                         </ul>
-                        <li><b>Device Type Category</b> <a href="{{ url_for('edit_device', device_id=device.id) }}"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <li><b>Device Type Category</b> <a href="#" id="show_devicetypecategory_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                         <ul>
                             <li><b>ID</b> : {{ device.devicetype.devicetypecategory.id }}</li>
                             <li><b>Name</b> : {{ device.devicetype.devicetypecategory.name }}</li>
@@ -40,6 +40,51 @@
             </ul>
             </div>
         </div>
+        <div class="col-md-6">
+            {{ render_form(device_form, add_mode=True, legend="Modify the Device", hidden=True, as_well=True, white=True) }}
+            {{ render_form(devicetype_form, add_mode=True, legend="Modify the Device Type", hidden=True, as_well=True, white=True) }}
+            {{ render_form(devicetypecategory_form, add_mode=False, legend="Modify the Device Type Category", hidden=True, as_well=True, white=True) }}
+            {{ render_form(manufacturer_form, add_mode=False, legend="Modify the Manufacturer", hidden=True, as_well=True, white=True) }}
+            {{ render_form(lan_form, add_mode=False, legend="Modify the Lan", hidden=True, as_well=True, white=True) }}
+
+            {{ render_form_in_modal(new_lan_form, device_form.lan, add_mode=False) }}
+            {{ render_form_in_modal(new_devicetype_form, device_form.devicetype) }}
+            {{ render_form_in_modal(new_devicetypecategory_form, new_devicetype_form.devicetypecategory) }}
+            {{ render_form_in_modal(new_manufacturer_form, new_devicetype_form.manufacturer) }}
+            {{ render_form_in_modal(new_devicetypecategory_form, devicetype_form.devicetypecategory, add_mode=False) }}
+            {{ render_form_in_modal(new_manufacturer_form, devicetype_form.manufacturer, add_mode=False) }}
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js_at_end %}
+<script type="text/javascript">
+    $('#{{ device_form._prefix }}form-hidden').show();
+    var active = '#{{ device_form._prefix }}form-hidden';
+
+    function slide_callback(selector) {
+        if(!(active === selector)) {
+            $(active).slideToggle(200, function() {
+                $(selector).slideToggle(200);
+            });
+            active = selector;
+        }
+    }
+    $("#show_device_button").click(function () {
+        slide_callback('#{{ device_form._prefix }}form-hidden');
+    });
+    $("#show_lan_button").click(function () {
+        slide_callback('#{{ lan_form._prefix }}form-hidden');
+    });
+    $("#show_devicetype_button").click(function () {
+        slide_callback('#{{ devicetype_form._prefix }}form-hidden');
+    });
+    $("#show_manufacturer_button").click(function () {
+        slide_callback('#{{ manufacturer_form._prefix }}form-hidden');
+    });
+    $("#show_devicetypecategory_button").click(function () {
+        slide_callback('#{{ devicetypecategory_form._prefix }}form-hidden');
+    });
+</script>
 {% endblock %}
