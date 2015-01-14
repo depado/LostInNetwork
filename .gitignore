@@ -1,3 +1,4 @@
+env
 venv
 app/static/bower_components
 config.py
