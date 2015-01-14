@@ -52,9 +52,11 @@ def devices():
         lan_form.chain_push_new(request=request, model=Lan)
         manufacturer_form.chain_push_new(request=request, model=Manufacturer)
 
-    return render_template('devices.html', devices=Device.query.all(), device_form=device_form,
-                           devicetype_form=devicetype_form, devicetypecategory_form=devicetypecategory_form,
-                           lan_form=lan_form, manufacturer_form=manufacturer_form, active_page="devices")
+    form_dict = dict(lan_form=lan_form, device_form=device_form, devicetype_form=devicetype_form,
+                     devicetypecategory_form=devicetypecategory_form, 
+                     manufacturer_form=manufacturer_form)
+
+    return render_template('devices.html', devices=Device.query.all(), **form_dict)
 
 
 @app.route("/devices/delete/<int:device_id>", methods=['GET'])
@@ -78,6 +80,9 @@ def delete_device(device_id):
 @app.route("/devices/edit/<int:device_id>", methods=['GET', 'POST'])
 @login_required
 def edit_device(device_id):
+    """
+    Edit a device
+    """
     device = Device.query.filter_by(id=device_id).first_or_404()
     form = DeviceForm(obj=device)
     if form.validate_on_submit():
@@ -93,5 +98,14 @@ def edit_device(device_id):
 @app.route("/devices/inspect/<int:device_id>", methods=['GET', 'POST'])
 @login_required
 def inspect_device(device_id):
+    """
+    Inspect and edit a device and all its related object.
+    """
     device = Device.query.filter_by(id=device_id).first_or_404()
+    devicetype = device.devicetype
+    lan_form = LanForm(prefix="lan", obj=device.lan)
+    device_form = DeviceForm(prefix="device", obj=device)
+    devicetype_form = DeviceTypeForm(prefix="devicetype", obj=devicetype)
+    devicetypecategory_form = DeviceTypeCategoryForm(prefix="devicetypecategory", obj=devicetype.devicetypecategory)
+    manufacturer_form = ManufacturerForm(prefix="manufacturer", obj=devicetype.manufacturer)
     return render_template("inspect_device.html", device=device, active_page="devices")

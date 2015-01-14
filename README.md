@@ -24,11 +24,10 @@ You need the config.py file. There is one in the repo that is encrypted. You hav
 
 **If (and only if)** there is already a database in the repo, you can skip the database creation step (for now there is no database in the repo)  
 
-To create the database, do as follow :
+Ensure that there is already a database folder in the project root. (LostInNetwork/database/) If not, create it.   
+To create the database with the root/root user, do as follow :
 
-    python manage.py shell
-    > from app import db
-    > db.create_all()
+    python manage.py create_db
 
 You can then run your test server as follow :
 
