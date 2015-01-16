@@ -12,6 +12,7 @@ itsdangerous==0.24
 Jinja2==2.7.3
 Mako==1.0.0
 MarkupSafe==0.23
+pycrypto==2.6.1
 six==1.9.0
 SQLAlchemy==0.9.8
 SQLAlchemy-Utils==0.29.2
