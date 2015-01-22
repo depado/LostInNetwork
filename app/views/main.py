@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, redirect, url_for, request, flash
-
+from flask import render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, logout_user, current_user, login_required
 
 from app import app
 from app.forms import LoginForm, SettingsForm
 from app.models import User
+from app.utils.crypto import PasswordManager
 
 
 @app.route('/', methods=['GET'])
@@ -25,6 +25,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         login_user(user)
+        PasswordManager.set_session_pwdh(form.password.data)
         return redirect(url_for('index'))
     else:
         return render_template("login.html", form=form)
@@ -33,6 +34,7 @@ def login():
 @app.route('/logout', methods=['GET'])
 def logout():
     logout_user()
+    PasswordManager.pop_session_pwdh()
     return redirect(url_for('login'))
 
 
