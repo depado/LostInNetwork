@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from wtforms.validators import IPAddress, DataRequired, Optional
+from wtforms.validators import IPAddress, DataRequired
 from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.widgets import PasswordInput
 
@@ -15,16 +15,10 @@ DeviceForm = model_form(Device, base_class=CustomForm, db_session=db.session, fi
             'placeholder': "Name",
         }
     },
-    'ip1': {
+    'ip': {
         'validators': [DataRequired(), IPAddress(message="Invalid IP Address")],
         'description': {
-            'placeholder': "First IP"
-        }
-    },
-    'ip2': {
-        'validators': [Optional(), IPAddress(message="Invalid IP Address")],
-        'description': {
-            'placeholder': "Second IP",
+            'placeholder': "IP"
         }
     },
     'password': {

@@ -100,4 +100,5 @@ def inspect_device(device_id):
                      new_manufacturer_form=new_manufacturer_form,
                      new_devicetypecategory_form=new_devicetypecategory_form)
 
-    return render_template("inspect_device.html", device=device, active_page="devices", **form_dict)
+    return render_template("inspect_device.html", device=device, active_page="devices",
+                           clear_pwd=device.decrypt_password(),**form_dict)

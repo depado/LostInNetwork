@@ -14,14 +14,12 @@
                 <div class="container-fluid" style="margin: 0px; padding: 0px;">
                     <div class="row">
                         <div class="col-md-3">
-                            <p>First IP</p>
-                            {% if device.ip2 %}<p>Secondary IP</p>{% endif %}
+                            <p>IP</p>
                             <p>Device Type</p>
                             <p>Lan</p>
                         </div>
                         <div class="col-md-9">
-                            <p>{{ device.ip1 }}</p>
-                            {% if device.ip2 %}<p>{{ device.ip2 }}</p>{% endif %}
+                            <p>{{ device.ip }}</p>
                             <p>{{ device.devicetype.name }}</p>
                             <p>{{ device.lan.name }}</p>
                         </div>

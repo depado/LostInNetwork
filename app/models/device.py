@@ -3,6 +3,8 @@
 from app import db
 from datetime import datetime
 
+from app.utils.crypto import PasswordManager
+
 
 class DeviceTypeCategory(db.Model):
     """
@@ -80,8 +82,7 @@ class Device(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
-    ip1 = db.Column(db.String(50))
-    ip2 = db.Column(db.String(50))
+    ip = db.Column(db.String(50))
     date = db.Column(db.DateTime())
     password = db.Column(db.String(50))
 
@@ -91,8 +92,13 @@ class Device(db.Model):
 
     risks = db.relationship('Risk', secondary=device_risks, backref=db.backref('pages', lazy='dynamic'))
 
-    def save(self):
+    def decrypt_password(self):
+        return PasswordManager.decrypt_string_from_session_pwdh(self.password)
+
+    def save(self, encrypt=True):
         self.date = datetime.now()
+        if encrypt:
+            self.password = PasswordManager.encrypt_string_from_session_pwdh(self.password)
         db.session.add(self)
         try:
             db.session.commit()

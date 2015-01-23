@@ -56,10 +56,14 @@ class PasswordManager(object):
         Sets the session password hash so it can get used for later encryption/decryption
         :param clear_text_pwd: The password in clear-text (Won't be kept in the session obviously)
         """
+        session['pwdh'] = PasswordManager.generate_pwdh_from_password(clear_text_pwd)
+
+    @staticmethod
+    def generate_pwdh_from_password(clear_text_pwd):
         m = SHA512.new()
         m.update(AESCipher.str_to_bytes(app.config.get('PWD_SALT')))
         m.update(AESCipher.str_to_bytes(clear_text_pwd))
-        session['pwdh'] = m.hexdigest()
+        return m.hexdigest()
 
     @staticmethod
     def pop_session_pwdh():

@@ -13,10 +13,9 @@
                     <ul>
                         <li><b>ID</b> : {{ device.id }}</li>
                         <li><b>Name</b> : {{ device.name }}</li>
-                        <li><b>IP</b> : {{ device.ip1 }}</li>
-                        <li><b>Secondary IP (optional)</b> : {% if device.ip2 %}{{ device.ip2 }}{% else %}None{% endif %}</li>
+                        <li><b>IP</b> : {{ device.ip }}</li>
                         <li><b>Last Modification</b> : {{ device.date }}</li>
-                        <li><b>Password</b> : Should we really show that ?</li>
+                        <li><b>Password</b> : <span class="pwd_field"><b>Encrypted / Hidden</b></span></li>
                         <li><b>Lan</b> <a href="#" id="show_lan_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                         <ul>
                             <li><b>ID</b> : {{ device.lan.id }}</li>
@@ -39,14 +38,15 @@
                         </ul>
                     </ul>
                 </ul>
-                <a href="#" id="display-summary">Show/Hide Summary</a>
+                <a href="#" id="display-password">Show Password</a><br />
+                <a href="#" id="display-summary">Show Summary</a>
             </div>
             <div class="well setting transparent white" id="summary" style="display: none;">
                 <legend class="clear-legend">Summary of the Device</legend>
                 <ul>
                     <li><b>Name</b> : {{ device.name }}</li>
-                    <li><b>IP</b> : {{ device.ip1 }}</li>
-                    <li><b>Secondary IP (optional)</b> : {% if device.ip2 %}{{ device.ip2 }}{% else %}None{% endif %}</li>
+                    <li><b>IP</b> : {{ device.ip }}</li>
+                    <li><b>Password</b> : <span class="pwd_field"><b>Encrypted / Hidden</b></span></li>
                     <li><b>Lan</b> : {{ device.lan.name }}</li>
                     <li><b>Device Type</b> : {{ device.devicetype.name }}</li>
                     <li><b>Device Type Category</b> : {{ device.devicetype.devicetypecategory.name }}</li>
@@ -102,6 +102,24 @@
     });
     $("#display-summary").click(function () {
         $("#summary").slideToggle(200);
+        if($("#display-summary").text() === "Show Summary") {
+            $("#display-summary").text("Hide Summary");
+        } else {
+            $("#display-summary").text("Show Summary");
+        }
+        return false;
+    });
+    $("#display-password").click(function () {
+        $(".pwd_field").each(function (i, el) {
+            if(el.innerHTML === "<b>Encrypted / Hidden</b>") {
+                el.innerHTML = "{{ clear_pwd }}";
+                $("#display-password").text("Hide Password");
+            } else {
+                el.innerHTML = "<b>Encrypted / Hidden</b>";
+                $("#display-password").text("Show Password");
+            }
+        });
+        return false;
     });
 </script>
 {% endblock %}
