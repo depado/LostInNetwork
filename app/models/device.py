@@ -4,7 +4,6 @@ from app import db
 from datetime import datetime
 
 from app.utils.crypto import PasswordManager
-from sqlalchemy.types import Enum
 
 class DeviceTypeCategory(db.Model):
     """
@@ -14,8 +13,8 @@ class DeviceTypeCategory(db.Model):
     friendly_name = "Device Type Category"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True)
-
+#    name = db.Column(db.String(50), unique=True)
+    name = db.Column(db.Enum('switch','router', 'firewall', name='type'))
     devicetypes = db.relationship('DeviceType', backref='devicetypecategory', lazy='dynamic')
 
     def save(self):
