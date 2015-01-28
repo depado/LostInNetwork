@@ -22,3 +22,4 @@ Werkzeug==0.9.6
 WTForms==2.0.1
 WTForms-Alchemy==0.13.0
 WTForms-Components==0.9.7
+psycopg2==2.5.4
