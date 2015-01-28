@@ -19,7 +19,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(666))
+    password = db.Column(db.String(66))
     permission = db.Column(db.String(1))
     superuser = db.Column(db.Boolean())
     active = db.Column(db.Boolean())

@@ -30,7 +30,7 @@ def getCve( url, outfile ):
 		f.write(data)
 
 # 
-#getCve( cve_url, cve_csv )
+getCve( cve_url, cve_csv )
 
 
 print('opening',cve_csv)
@@ -73,7 +73,7 @@ engine = create_engine('postgresql://lin:lin@localhost/lin')
 with engine.connect() as conn:
 
 # Find last index of cve table
-	sqlreq='SELECT COUNT(id) FROM cve;'
+	sqlreq='SELECT COUNT(id) FROM vulncve;'
 	result=conn.execute(sqlreq)
 	res=result.fetchone()
 	id_count=res['count']					
@@ -81,10 +81,10 @@ with engine.connect() as conn:
 	
 	if id_count > 0:
 		cve_count=id_count
-		print("DEBUG: Table cve is not empty")
+		print("DEBUG: Table vulncve is not empty")
 	# DEBUG
 	else:
-		print("DEBUG: Table cve is empty")
+		print("DEBUG: Table vulncve is empty")
 	# END DEBUG
 	
 	# Organize and add data to database
@@ -110,7 +110,7 @@ with engine.connect() as conn:
 		# 
 		if id_count > 0:
 #			print("DEBUG: is "+cve_id+" is in table?")
-			sqlreq="SELECT count(id) FROM cve WHERE cve_id='"+cve_id+"';"
+			sqlreq="SELECT count(id) FROM vulncve WHERE cve_id='"+cve_id+"';"
 			result=conn.execute(sqlreq)
 			res=result.fetchone()
 			i=res['count']

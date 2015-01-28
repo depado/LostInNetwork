@@ -12,7 +12,7 @@ class VulnCve(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     cve_id = db.Column(db.String(20))
     version = db.Column(db.String())
-    desc = db.Column(db.String())
+    description = db.Column(db.String())
     url = db.Column(db.String())
     status = db.Column(db.String())
 
