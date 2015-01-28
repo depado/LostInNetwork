@@ -4,7 +4,7 @@ from app import db
 from datetime import datetime
 
 from app.utils.crypto import PasswordManager
-
+from sqlalchemy.types import Enum
 
 class DeviceTypeCategory(db.Model):
     """
@@ -84,8 +84,10 @@ class Device(db.Model):
     name = db.Column(db.String(50), unique=True)
     ip = db.Column(db.String(50))
     date = db.Column(db.DateTime())
+    username = db.Column(db.String(50))
     password = db.Column(db.String(50))
-
+    enapassword = db.Column(db.String(50))
+    method = db.Column(db.Enum( 'ssh', 'telnet', name='connect_method'))
     lan_id = db.Column(db.Integer, db.ForeignKey('lan.id'))
     configuration_id = db.Column(db.Integer, db.ForeignKey('configuration.id'))
     devicetype_id = db.Column(db.Integer, db.ForeignKey('device_type.id'))
