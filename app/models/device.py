@@ -14,7 +14,7 @@ class DeviceTypeCategory(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 #    name = db.Column(db.String(50), unique=True)
-    name = db.Column(db.Enum('switch','router', 'firewall', name='type'))
+    name = db.Column(db.Enum('switch2', 'switch3', 'router', 'firewall', name='type'))
     devicetypes = db.relationship('DeviceType', backref='devicetypecategory', lazy='dynamic')
 
     def save(self):
