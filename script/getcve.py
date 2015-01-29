@@ -5,17 +5,31 @@
 # FIXME : use VulnCve table 
 
 
-import urllib.request
 import gzip
+import logging
+import os
 import re
 from sqlalchemy import Table, MetaData, create_engine, select, cast
 import tempfile
+import urllib.request
 
-# path
+# File path
 cve_url='http://cve.mitre.org/data/downloads/allitems.csv.gz'
 cve_csv='cve.csv.gz'
+logfile='log/lostinnetwork.log'
+
+## Log configuration
+uid=os.getlogin()
+d= { 'user' :  uid }
+# Print log with same format as default syslog
+logformat='%(asctime)s %(user)s %(name)s[%(process)d] %(levelname)s %(message)s' 
+log=logging.getLogger('LOSTINNETWORK')
+logging.basicConfig(filename='log/lostinnetwork.log',format=logformat, datefmt='%b %d %H:%M:%S',level=logging.DEBUG)
+
+
+# Remove delete=False in production
 tmpfile=tempfile.NamedTemporaryFile(delete=False)
-print(tmpfile.name)
+log.info('tmpfile name %s', tmpfile.name, extra=d)
 cve={}
 version='version'
 
@@ -23,11 +37,11 @@ version='version'
 def getCve( url, outfile ):
     req=urllib.request.Request(url)
     r=urllib.request.urlopen(req)
-    print('open url: ',url)
+    log.info('GET %s', url, extra=d)
     gz_data=r.read()
-    print('decompress data')
+    log.info('decompress cve list', extra=d)
     data=gzip.decompress(gz_data)
-    print('write data to',outfile)
+    log.info('write cve list to %s', outfile, extra=d)
     with open(outfile, 'wb') as f: 
         f.write(gz_data)
     with open(tmpfile.name, 'wb') as tf:
@@ -35,21 +49,20 @@ def getCve( url, outfile ):
 
 getCve( cve_url, cve_csv )
 
-print('opening',cve_csv)
+log.info('opening %s', cve_csv, extra=d)
 with open(tmpfile.name, 'r', encoding='iso-8859-2') as fi:
     for line in fi:
         # line filter (line content match cve_search)    
         cve_search=re.search('^(CVE[\d-]+),(.*?),(.*?)\|.*$', line)
         if cve_search: 
             tmp_id=cve_search.group(1)
-#            print('DEBUG no cisco: '+tmp_id)
             tmp_status=cve_search.group(2)
             tmp_desc=cve_search.group(3)
+
             # Filter Cisco devices ( filter Cisco/IOS )
             cisco_search=re.search('Cisco| IOS ', tmp_desc )
             if cisco_search:
                 cve_id=tmp_id
-#                print('DEBUG  cisco: '+tmp_id)
                 cve[cve_id]={}
                 cve[cve_id]['status']=tmp_status
                 cve[cve_id]['description']=tmp_desc
@@ -64,10 +77,8 @@ with open(tmpfile.name, 'r', encoding='iso-8859-2') as fi:
                 if url_search:
                     try: 
                         cve[cve_id]['url']+='\n'+url_search.group(1)
-#                        print('DEBUG',url_search.group(1), 'exist')
                     except :
                         cve[cve_id]['url']=url_search.group(1)
-#                        print('DEBUG',url_search.group(1), 'not exist')
     
 
 # conect to db
@@ -83,10 +94,10 @@ with engine.connect() as conn:
     
     if id_count > 0:
         cve_count=id_count
-        print("DEBUG: Table vulncve is not empty")
+        log.info('Table vulncve is not empty', extra=d)
     # DEBUG
     else:
-        print("DEBUG: Table vulncve is empty")
+        log.info('Table vulncve is empty', extra=d)
     # END DEBUG
     
     # Organize and add data to database
@@ -97,8 +108,6 @@ with engine.connect() as conn:
                 cve[cve_id][f]=''
                 
         for entry in cve[cve_id]:
-    #        print(cve_id,entry,':',cve[cve_id][entry])
-    #        print(entry)    
             if entry == 'url':
                 url=cve[cve_id][entry]
             elif entry == 'description':
@@ -111,27 +120,18 @@ with engine.connect() as conn:
     
         # 
         if id_count > 0:
-#            print("DEBUG: is "+cve_id+" is in table?")
             sqlreq="SELECT count(id) FROM vulncve WHERE cve_id='"+cve_id+"';"
             result=conn.execute(sqlreq)
             res=result.fetchone()
             i=res['count']
             if i > 0:
-#                print("DEBUG: yes")
                 continue
     
-#        sqlreq="INSERT INTO cve VALUES("+str(cve_count)+",'"+cve_id+"','"+desc+"','"+url+"','"+status+"')"
         sqlreq="INSERT INTO vulncve VALUES("+str(cve_count)+",'"+cve_id+"','"+version+"','"+desc+"','"+url+"','"+status+"')"
         try:
             result=conn.execute(sqlreq)
+            log.debug('ADD: %s', cve_id, extra=d)
             cve_count+=1
-    #        print('DEBUG: '+cve_id)
         except:
-#            print('DEBUG: '+cve_id+' ==>'+sqlreq)
-            print('DEBUG FAIL: '+cve_id)
+            log.debug('FAIL add: %s', cve_id, extra=d)
 
-#engine = create_engine('postgresql://lin:lin@localhost/lin')
-#with engine.connect() as conn:
-#    result = conn.execute('select * from cve')
-##    meta=MetaData()
-#    print(result.fetchall())
