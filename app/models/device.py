@@ -14,7 +14,7 @@ class DeviceTypeCategory(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 #    name = db.Column(db.String(50), unique=True)
-    name = db.Column(db.Enum('switch2', 'switch3', 'router', 'firewall', name='type'))
+    name = db.Column(db.Enum('default', 'switch2', 'switch3', 'router', 'firewall', name='type'), default='default')
     devicetypes = db.relationship('DeviceType', backref='devicetypecategory', lazy='dynamic')
 
     def save(self):
@@ -83,10 +83,10 @@ class Device(db.Model):
     name = db.Column(db.String(50), unique=True)
     ip = db.Column(db.String(50))
     date = db.Column(db.DateTime())
-    username = db.Column(db.String(50))
-    password = db.Column(db.String(50))
-    enapassword = db.Column(db.String(50))
-    method = db.Column(db.Enum( 'ssh', 'telnet', name='connect_method'))
+    username = db.Column(db.String(50), default='root')
+    password = db.Column(db.String(66))
+    enapassword = db.Column(db.String(66))
+    method = db.Column(db.Enum( 'ssh', 'telnet', name='connect_method'), default='ssh')
     lan_id = db.Column(db.Integer, db.ForeignKey('lan.id'))
     configuration_id = db.Column(db.Integer, db.ForeignKey('configuration.id'))
     devicetype_id = db.Column(db.Integer, db.ForeignKey('device_type.id'))
