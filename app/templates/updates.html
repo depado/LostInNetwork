@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 {% include 'menu.html' %}
-CVE UPDATE 
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="well setting transparent">
+			<form id="cve-form" action="" method="POST">
+				<button id="getcve-btn" class="btn btn-primary" value="updatecve" name="getcve-btn" type="submit">Update CVE</button>
+			</form>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 

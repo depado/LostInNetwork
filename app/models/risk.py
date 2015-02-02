@@ -16,7 +16,7 @@ class RiskLevel(db.Model):
     Represents a Risk Level on a scale of 10
     """
     id = db.Column(db.Integer, primary_key=True)
-    level = db.Column(db.Enum('1','2','3','4','5','6','7','8','9','10', name='level_id'))
+    level = db.Column(db.Enum('0','1','2','3','4','5','6','7','8','9','10', name='level_id'), default='0')
 
 
 class Risk(db.Model):
