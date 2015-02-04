@@ -16,17 +16,17 @@ class VulnCve(db.Model):
     url = db.Column(db.String())
     status = db.Column(db.String())
 
-#    def save(self):
-#        db.session.add(self)
-#        try:
-#            db.session.commit()
-#        except:
-#            db.session.rollback()
-#            return False
-#        return True
-#
-#    def __repr__(self):
-#        return self.name
+    def save(self):
+        db.session.add(self)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return False
+        return True
+
+    def __repr__(self):
+        return self.name
 
 class VulnBasic(db.Model):
 
