@@ -110,7 +110,7 @@ def updateCve(cve_dict):
 
             elif entry == 'version':
                 obj.version=cve_dict[cve_id][entry]
-            db.session.add(obj)
-            db.session.commit()
+        db.session.add(obj)
+        db.session.commit()
 
         log.info('Add CVE: '+cve_id, extra=logvar)

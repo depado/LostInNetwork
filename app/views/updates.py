@@ -16,10 +16,8 @@ def updates():
     if request.method == 'POST':
         if request.form['getcve-btn'] == 'updatecve':
             startLog()
-            flash("Download CVE", "info")
             downCve()
             data = readCve()
-            flash("Add CVE in db", "info")
             updateCve(data)
             flash("Update finished", "info")
             return redirect(url_for('updates'))
