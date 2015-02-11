@@ -5,6 +5,7 @@ import pdb
 import os,sys,string
 import pexpect
 import re
+from app import app
 
 PROMPT_REGEX_DEBIAN = "\r\n[^\r\n ]+:[^\r\n]+[\\\$#][ ]*"; #20121312-YRG:
 PROMPT_REGEX_IPSO = "\r\n[^\r\n ]+\\\[[^\r\n]+\\\]#[ ]*"; #20121312-YRG: 
@@ -35,6 +36,7 @@ ComCiscoISR={'sh ip route':'route','sh run':'run'}
 
 #def send(Method,Hostname,Ip,Username,Password,Enable,Devicetype):
 def send(data):
+    directory='data/'
     derror={}
     x=data.split (",")
     sMethod = (x[0])
@@ -47,7 +49,7 @@ def send(data):
 
     if sMethod == "ssh":
         sTunnel = ('ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no -l ' + sDeviceType + ' ')
-       app.logger.info(sHostname + 'connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
+        app.logger.info(sHostname + 'connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
         child = pexpect.spawn(sTunnel + sUsername + '@' + sIp)
     elif sMethod == "telnet":
         sTunnel = 'telnet '
@@ -58,31 +60,31 @@ def send(data):
             child.sendline(sUsername)
         elif m==1:
             derror[sHostname]='TIMEOUT'
-            return
+            return derror
         elif m==2:
             derror[sHostname]='EOF'
-            return
+            return derror
     m = child.expect ([PROMPT_REGEX_CISCO,'assword:',pexpect.TIMEOUT,pexpect.EOF])
     if m==0:
         child.sendline(sPassword)
     elif m==1:
         derror[sHostname]='TIMEOUT'
-        return
+        return derror
     elif m==2:
         derror[sHostname]='EOF'
-        return
+        return derror
     q = child.expect (['>','[Pp]assword:',pexpect.TIMEOUT,pexpect.EOF])
     if q==0:
         child.sendline ('enable')
     elif q==1:
         derror[sHostname]='wrong password'
-        return
+        return derror
     elif q==2:
         derror[sHostname]='TIMEOUT'
-        return
+        return derror
     elif q==3:
         derror[sHostname]='EOF'
-        return
+        return derror
     q = child.expect (['assword:','>',pexpect.TIMEOUT,pexpect.EOF])
     if q==0:
         child.sendline (sEnable)
@@ -90,7 +92,7 @@ def send(data):
         child.sendline (sEnable)
     elif q==2:
         derror[sHostname]='TIMEOUT'
-        return
+        return derror
     elif q==3:
         derror[sHostname]='EOF'
     if sDeviceType=="cisco":    
@@ -100,25 +102,25 @@ def send(data):
             child.sendline ('terminal length 0')
         elif q==1:
             derror[sHostname]='wrong enable password'
-            return
+            return derror
         elif q==2:
             derror[sHostname]='TIMEOUT'
-            return
+            return derror
         elif q==3:
             derror[sHostname]='EOF'
-            return
+            return derror
         q = child.expect ([PROMPT_REGEX_CISCOENABLE,pexpect.TIMEOUT,pexpect.EOF])
         for key in ComCiscoISR:
             if q==0:
                 child.sendline (key)
             elif q==1:
                 derror[sHostname]='TIMEOUT'
-                return
+                return derror
             elif q==2:
                 derror[sHostname]='EOF'
-                return
+                return derror
             q = child.expect ([PROMPT_REGEX_CISCOENABLE,pexpect.TIMEOUT,pexpect.EOF])
-            result=open(sHostname +'-' + ComCiscoISR[key] + '.txt','wb')
+            result=open(directory + sHostname +'-' + ComCiscoISR[key] + '.txt','wb')
             result.write(child.before)
             result.close
         child.sendline ('exit')
@@ -142,7 +144,3 @@ def send(data):
 #    else:
 #        print ('not enough arguments for device ' + x[1])
 #
-
-
-
-print ('psendcommand done')
