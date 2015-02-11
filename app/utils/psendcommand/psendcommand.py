@@ -28,7 +28,6 @@ PROMPT_REGEX_IRONPORT = "\r\n[\r]*[^\r\n\*># ]+>[ ]*";
 PROMPT_REGEX_NETSCALER = "\r\n[\r]*>[ ]*";
 
 
-adict={}
 #Definition command to send depend to the devicetype
 
 Regex={'cisco':(PROMPT_REGEX_CISCO,PROMPT_REGEX_CISCOENABLE),'ciscoASA':(PROMPT_REGEX_CISCOASA,PROMPT_REGEX_CISCOENABLE)}
@@ -36,6 +35,7 @@ ComCiscoISR={'sh ip route':'route','sh run':'run'}
 
 #def send(Method,Hostname,Ip,Username,Password,Enable,Devicetype):
 def send(data):
+    derror={}
     x=data.split (",")
     sMethod = (x[0])
     sHostname = (x[1])
@@ -46,50 +46,42 @@ def send(data):
     sDeviceType = (x[6])
 
     if sMethod == "ssh":
-        #sTunnel = ('ssh -o StrictHostKeyChecking=no -l ' + sUID + ' ')
         sTunnel = ('ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no -l ' + sDeviceType + ' ')
-        print ('connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
+       app.logger.info(sHostname + 'connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
         child = pexpect.spawn(sTunnel + sUsername + '@' + sIp)
     elif sMethod == "telnet":
         sTunnel = 'telnet '
-        print ('connecting to ' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
+        app.logger.info('connecting to ' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
         child = pexpect.spawn(sTunnel + sIp)
         m=child.expect ([PROMPT_REGEX_CISCO,pexpect.TIMEOUT, pexpect.EOF])
         if m==0:
             child.sendline(sUsername)
-            print ('child.sendline sUsername')
         elif m==1:
-            print ('TIMEOUT')
+            derror[sHostname]='TIMEOUT'
             return
         elif m==2:
-            print ('EOF')
+            derror[sHostname]='EOF'
             return
     m = child.expect ([PROMPT_REGEX_CISCO,'assword:',pexpect.TIMEOUT,pexpect.EOF])
     if m==0:
         child.sendline(sPassword)
-        print ('child.sendline sPassword')
     elif m==1:
-        adict[sHostname]='TIMEOUT'
-        print ("TIMEOUT")
+        derror[sHostname]='TIMEOUT'
         return
     elif m==2:
-        adict[sHostname]='EOF'
-        print ("EOF")
+        derror[sHostname]='EOF'
         return
     q = child.expect (['>','[Pp]assword:',pexpect.TIMEOUT,pexpect.EOF])
     if q==0:
         child.sendline ('enable')
     elif q==1:
-        adict[sHostname]='wrong password'
-        print ('wrong password')
+        derror[sHostname]='wrong password'
         return
     elif q==2:
-        adict[sHostname]='TIMEOUT'
-        print ('TIMEOUT')
+        derror[sHostname]='TIMEOUT'
         return
     elif q==3:
-        adict[sHostname]='EOF'
-        print ('EOF')
+        derror[sHostname]='EOF'
         return
     q = child.expect (['assword:','>',pexpect.TIMEOUT,pexpect.EOF])
     if q==0:
@@ -97,45 +89,40 @@ def send(data):
     elif q==1:
         child.sendline (sEnable)
     elif q==2:
-        adict[sHostname]='TIMEOUT'
-        print ('TIMEOUT')
+        derror[sHostname]='TIMEOUT'
         return
     elif q==3:
-        adict[sHostname]='EOF'
-        print ('EOF')
+        derror[sHostname]='EOF'
     if sDeviceType=="cisco":    
         #q = child.expect (['#','>',pexpect.TIMEOUT,pexpect.EOF])
         q = child.expect ([PROMPT_REGEX_CISCOENABLE,'>',pexpect.TIMEOUT,pexpect.EOF])
         if q==0:
             child.sendline ('terminal length 0')
         elif q==1:
-            adict[sHostname]='wrong enable password'
-            print ('Wrong enable password')
+            derror[sHostname]='wrong enable password'
             return
         elif q==2:
-            print ('TIMEOUT')
+            derror[sHostname]='TIMEOUT'
             return
         elif q==3:
-            print ('EOF')
+            derror[sHostname]='EOF'
             return
         q = child.expect ([PROMPT_REGEX_CISCOENABLE,pexpect.TIMEOUT,pexpect.EOF])
         for key in ComCiscoISR:
-            print(key)
             if q==0:
-                print('child.sendline '+ key) 
                 child.sendline (key)
             elif q==1:
-                print ('TIMEOUT')
+                derror[sHostname]='TIMEOUT'
                 return
             elif q==2:
-                print ('EOF')
+                derror[sHostname]='EOF'
                 return
             q = child.expect ([PROMPT_REGEX_CISCOENABLE,pexpect.TIMEOUT,pexpect.EOF])
             result=open(sHostname +'-' + ComCiscoISR[key] + '.txt','wb')
             result.write(child.before)
             result.close
         child.sendline ('exit')
-        return adict
+        return derror
 
 
 #list_devices=open('list.txt').readlines() #This will read the list of devices that file is on the same location as the script -- it's something I have to change
