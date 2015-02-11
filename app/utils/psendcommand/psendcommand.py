@@ -40,6 +40,7 @@ debug = app.config['DEBUG']
 
 def send(data):
     adict = dict()
+    derror = {}
     x=data.split (",")
     s_method = (x[0])
     s_hostname = (x[1])
