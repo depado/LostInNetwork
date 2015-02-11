@@ -1,40 +1,45 @@
 # -*- coding: utf-8 -*-
 
-
-from app import app
-from app import db
-from app.models.vuln import VulnCve
-from flask import session
-from sqlalchemy import Table, MetaData, create_engine, select, cast
 import gzip
 import logging
 import os
 import re
-import tempfile
 import urllib.request
 
-def startLog():
-    global log,logvar
-    uid=os.getlogin()
-    logvar={'user' : uid }
-    # Print log with same format as default syslog
-    logformat='%(asctime)s %(user)s %(name)s[%(process)d] %(levelname)s %(message)s'
-    log=logging.getLogger('LOSTINNETWORK')
-    logging.basicConfig(filename=app.config.get('LOG_FILE'),format=logformat, datefmt='%b %d %H:%M:%S',level=logging.DEBUG)
+from app import app
+from app import db
+from app.models import VulnCve
 
-# Download CVE
-# url and path are specified in config.py
-def downCve():
-    url=app.config.get('CVE_URL')
-    outfile=app.config.get('CVE_GZ')
-    req=urllib.request.Request(url)
-    r=urllib.request.urlopen(req)
-    log.info('GET %s', url, extra=logvar)
-    gz_data=r.read()
-    log.info('write cve list to %s', outfile, extra=logvar)
-    with open(outfile, 'wb') as g:
-        g.write(gz_data)
-    return 1
+uid = os.getlogin()
+logvar = {'user': uid}
+logformat = '%(asctime)s %(user)s %(name)s[%(process)d] %(levelname)s %(message)s'
+log = logging.getLogger('LOSTINNETWORK')
+logging.basicConfig(
+    filename=app.config.get('LOG_FILE'),
+    format=logformat,
+    datefmt='%b %d %H:%M:%S',
+    level=logging.DEBUG
+)
+
+def down_cve():
+    """
+    Download CVE
+    url and path are specified in config.py
+    """
+    try:
+        url=app.config.get('CVE_URL')
+        outfile=app.config.get('CVE_GZ')
+        req=urllib.request.Request(url)
+        r=urllib.request.urlopen(req)
+        log.info('GET %s', url, extra=logvar)
+        gz_data=r.read()
+        log.info('write cve list to %s', outfile, extra=logvar)
+        with open(outfile, 'wb') as g:
+            g.write(gz_data)
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
 # Read and parse CVE
 # Return a dict
@@ -71,7 +76,8 @@ def readCve():
                     if url_search:
                         try:
                             cve[cve_id]['url']+='\n'+url_search.group(1)
-                        except :
+                        except Exception as e:
+                            log.info(e, extra=logvar)
                             cve[cve_id]['url']=url_search.group(1)
     log.debug('End readCve()', extra=logvar)
     return cve

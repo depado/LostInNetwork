@@ -1,6 +1,4 @@
-#!/usr/bin/python3
-# Version 1.0
-# Author hiziv
+#-*- coding: utf-8 #
 
 try:
     import Queue
@@ -8,14 +6,15 @@ except ImportError:
     import queue as Queue
 import threading
 import time
-from psendcommand import *
+from .psendcommand import send
 
 exitFlag = 0
 
-class myThread (threading.Thread):
-    def __init__(self, threadID, name, q):
+
+class MyThread(threading.Thread):
+    def __init__(self, thread_id, name, q):
         threading.Thread.__init__(self)
-        self.threadID = threadID
+        self.threadID = thread_id
         self.name = name
         self.q = q
     def run(self):
@@ -23,22 +22,18 @@ class myThread (threading.Thread):
         process_data(self.name, self.q)
         print ("Exiting " + self.name)
 
-def process_data(threadName, q):
+def process_data(thread_name, q):
     while not exitFlag:
         queueLock.acquire()
         if not workQueue.empty():
             data = q.get()
             queueLock.release()
-            #print ("%s processing %s" % (threadName, data))
-            print (data)
-            send (data)
-            print (adict)
+            send(data)
         else:
             queueLock.release()
         time.sleep(1)
 
 threadList = ["Thread-1", "Thread-2", "Thread-3"]
-#nameList = ["One", "Two", "Three", "Four", "Five"]
 queueLock = threading.Lock()
 workQueue = Queue.Queue(2000)
 threads = []
@@ -67,7 +62,7 @@ for i in list_devices:
 
 # Create new threads
 for tName in threadList:
-    thread = myThread(threadID, tName, workQueue)
+    thread = MyThread(threadID, tName, workQueue)
     thread.start()
     threads.append(thread)
     threadID += 1
