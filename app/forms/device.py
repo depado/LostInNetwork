@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from wtforms.validators import IPAddress, DataRequired
+from wtforms.validators import IPAddress, DataRequired, Optional
 from wtforms.ext.sqlalchemy.orm import model_form
 from wtforms.widgets import PasswordInput
 
@@ -13,20 +13,39 @@ DeviceForm = model_form(Device, base_class=CustomForm, db_session=db.session, fi
         'validators': [DataRequired()],
         'description': {
             'placeholder': "Name",
-        }
+        },
     },
     'ip': {
         'validators': [DataRequired(), IPAddress(message="Invalid IP Address")],
         'description': {
             'placeholder': "IP"
-        }
+        },
+    },
+    'username': {
+        'validators': [DataRequired()],
+        'description': {
+            'placeholder': "Username",
+        },
     },
     'password': {
         'widget': PasswordInput(),
         'validators': [DataRequired()],
         'description': {
             'placeholder': "Password",
-        }
+        },
+    },
+    'enausername': {
+        'validators': [Optional()],
+        'description': {
+            'placeholder': "Ena Username",
+        },
+    },
+    'enapassword': {
+        'widget': PasswordInput(),
+        'validators': [Optional()],
+        'description': {
+            'placeholder': "Ena Password"
+        },
     },
     'devicetype': {
         'validators': [DataRequired()],
