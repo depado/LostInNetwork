@@ -89,6 +89,13 @@ def updateCve(cve_dict):
     # Organize and add data to database
     db_fields=( 'description','status', 'url' )
     for cve_id in sorted(cve_dict):
+        if id_count != 0:
+            sqlreq = db.session.query(VulnCve).filter( VulnCve.cve_id == cve_id ).first()
+            if sqlreq:
+                log.info(cve_id+' already exist in db', extra=logvar)
+                continue
+
+
         for f in db_fields:
             if not f in cve_dict[cve_id].keys():
                 cve_dict[cve_id][f]=''
@@ -114,3 +121,4 @@ def updateCve(cve_dict):
         db.session.commit()
 
         log.info('Add CVE: '+cve_id, extra=logvar)
+    log.info('Update Finished', extra=logvar)
