@@ -31,6 +31,12 @@ def login():
         return render_template("login.html", form=form)
 
 
+@app.route("/test", methods=['GET'])
+def test():
+    print(PasswordManager.decrypt_string_from_session_pwdh(Device.query.all()[0].password))
+    return "OK"
+
+
 @app.route('/logout', methods=['GET'])
 def logout():
     logout_user()

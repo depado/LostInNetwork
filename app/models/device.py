@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from app import db
 from datetime import datetime
 
+from app import app, db
 from app.utils.crypto import PasswordManager
 
 class DeviceTypeCategory(db.Model):
@@ -13,7 +13,6 @@ class DeviceTypeCategory(db.Model):
     friendly_name = "Device Type Category"
 
     id = db.Column(db.Integer, primary_key=True)
-#    name = db.Column(db.String(50), unique=True)
     name = db.Column(db.Enum('default', 'switch2', 'switch3', 'router', 'firewall', name='type'), default='default')
     devicetypes = db.relationship('DeviceType', backref='devicetypecategory', lazy='dynamic')
 
@@ -21,7 +20,20 @@ class DeviceTypeCategory(db.Model):
         db.session.add(self)
         try:
             db.session.commit()
-        except:
+        except Exception as e:
+            app.logger.error("Error during save operation {}".format(e))
+            app.logger.exception()
+            db.session.rollback()
+            return False
+        return True
+
+    def delete(self):
+        db.session.delete(self)
+        try:
+            db.session.commit()
+        except Exception as e:
+            app.logger.error("Error during delete operation {}".format(e))
+            app.logger.exception()
             db.session.rollback()
             return False
         return True
@@ -49,14 +61,23 @@ class DeviceType(db.Model):
         db.session.add(self)
         try:
             db.session.commit()
-        except:
+        except Exception as e:
+            app.logger.error("Error during save operation {}".format(e))
+            app.logger.exception()
             db.session.rollback()
             return False
         return True
 
     def delete(self):
         db.session.delete(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            app.logger.error("Error during delete operation {}".format(e))
+            app.logger.exception()
+            db.session.rollback()
+            return False
+        return True
 
     def __repr__(self):
         return self.name
@@ -85,8 +106,9 @@ class Device(db.Model):
     date = db.Column(db.DateTime())
     username = db.Column(db.String(50), default='root')
     password = db.Column(db.String(66))
+    enausername = db.Column(db.String(50))
     enapassword = db.Column(db.String(66))
-    method = db.Column(db.Enum( 'ssh', 'telnet', name='connect_method'), default='ssh')
+    method = db.Column(db.Enum('ssh', 'telnet', name='connect_method'), default='ssh')
     lan_id = db.Column(db.Integer, db.ForeignKey('lan.id'))
     configuration_id = db.Column(db.Integer, db.ForeignKey('configuration.id'))
     devicetype_id = db.Column(db.Integer, db.ForeignKey('device_type.id'))
@@ -103,7 +125,9 @@ class Device(db.Model):
         db.session.add(self)
         try:
             db.session.commit()
-        except:
+        except Exception as e:
+            app.logger.error("Error during save operation {}".format(e))
+            app.logger.exception()
             db.session.rollback()
             return False
         return True
@@ -112,7 +136,9 @@ class Device(db.Model):
         db.session.delete(self)
         try:
             db.session.commit()
-        except:
+        except Exception as e:
+            app.logger.error("Error during delete operation {}".format(e))
+            app.logger.exception()
             db.session.rollback()
             return False
         return True

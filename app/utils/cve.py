@@ -1,25 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import gzip
-import logging
-import os
 import re
 import urllib.request
 
 from app import app
 from app import db
-from app.models import VulnCve
-
-uid = os.getlogin()
-logvar = {'user': uid}
-logformat = '%(asctime)s %(user)s %(name)s[%(process)d] %(levelname)s %(message)s'
-log = logging.getLogger('LOSTINNETWORK')
-logging.basicConfig(
-    filename=app.config.get('LOG_FILE'),
-    format=logformat,
-    datefmt='%b %d %H:%M:%S',
-    level=logging.DEBUG
-)
+from app.models.vuln import VulnCve
 
 def down_cve():
     """
@@ -31,23 +18,24 @@ def down_cve():
         outfile=app.config.get('CVE_GZ')
         req=urllib.request.Request(url)
         r=urllib.request.urlopen(req)
-        log.info('GET %s', url, extra=logvar)
+        app.logger.info('GET %s', url)
         gz_data=r.read()
-        log.info('write cve list to %s', outfile, extra=logvar)
+        app.logger.info('write cve list to %s', outfile)
         with open(outfile, 'wb') as g:
             g.write(gz_data)
         return True
     except Exception as e:
-        print(e)
+        app.logger.error(e)
         return False
 
-# Read and parse CVE
-# Return a dict
-def readCve():
+def read_cve():
+    """
+    Read and Parse CVE
+    :return: dict
+    """
     cve={}
-    log.info('opening %s', app.config.get('CVE_GZ'), extra=logvar)
+    app.logger.info('opening %s', app.config.get('CVE_GZ'))
     with gzip.open(app.config.get('CVE_GZ'), 'r') as f:
-       # a=gzip.decompress(f)
         for line in f:
             line=str(line)
             # line filter (line content match cve_search)
@@ -66,7 +54,7 @@ def readCve():
                     cve[cve_id]['status']=tmp_status
                     cve[cve_id]['description']=tmp_desc
                 else:
-                # next if not cisco devices
+                    # next if not cisco devices
                     continue
 
                 tab=line.split('|')
@@ -77,34 +65,36 @@ def readCve():
                         try:
                             cve[cve_id]['url']+='\n'+url_search.group(1)
                         except Exception as e:
-                            log.info(e, extra=logvar)
+                            app.logger.info(e)
                             cve[cve_id]['url']=url_search.group(1)
-    log.debug('End readCve()', extra=logvar)
+    app.logger.debug('End read_cve()')
     return cve
 
-def updateCve(cve_dict):
-    # sqlreq='SELECT COUNT(id) FROM vulncve;'
+def update_cve(cve_dict):
+    """
+    Update the CVE database
+    """
     sqlreq = db.session.query(db.func.count(VulnCve.id)).first()
     id_count=sqlreq[0]
-    log.debug('Start updateCve', extra=logvar)
+    app.logger.info('Start update_cve')
     if id_count > 0:
-        log.info('Table vulncve is not empty', extra=logvar)
+        app.logger.info('Table vulncve is not empty')
     else:
-        log.info('Table vulncve is empty', extra=logvar)
+        app.logger.info('Table vulncve is empty')
 
     # Organize and add data to database
-    db_fields=( 'description','status', 'url' )
+    db_fields=('description', 'status', 'url')
     for cve_id in sorted(cve_dict):
         if id_count != 0:
-            sqlreq = db.session.query(VulnCve).filter( VulnCve.cve_id == cve_id ).first()
+            sqlreq = db.session.query(VulnCve).filter(VulnCve.cve_id == cve_id).first()
             if sqlreq:
-                log.info(cve_id+' already exist in db', extra=logvar)
+                app.logger.info('{cve_id} already exist in db'.format(cve_id=cve_id))
                 continue
 
 
         for f in db_fields:
-            if not f in cve_dict[cve_id].keys():
-                cve_dict[cve_id][f]=''
+            if f not in cve_dict[cve_id].keys():
+                cve_dict[cve_id][f] = ''
 
         obj=VulnCve()
         obj.cve_id=cve_id
@@ -120,11 +110,10 @@ def updateCve(cve_dict):
             elif entry == 'status':
                 obj.status=cve_dict[cve_id][entry]
 
-
             elif entry == 'version':
                 obj.version=cve_dict[cve_id][entry]
         db.session.add(obj)
         db.session.commit()
 
-        log.info('Add CVE: '+cve_id, extra=logvar)
-    log.info('Update Finished', extra=logvar)
+        app.logger.info('Add CVE: {cve_id}'.format(cve_id=cve_id))
+    app.logger.info('Update Finished')
