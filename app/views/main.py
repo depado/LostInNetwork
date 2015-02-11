@@ -55,6 +55,7 @@ def settings():
             for device in Device.query.all():
                 # Decrypts the password using the session pwdh and encrypts it with the new pwdh (not in session)
                 device.password = PasswordManager.encrypt_string(device.decrypt_password(), new_pwdh)
+                device.enapassword = PasswordManager.encrypt_string(device.decrypt_enapassword(), new_pwdh)
                 device.save(encrypt=False)  # The password is already encrypted
             PasswordManager.set_session_pwdh(form.newpassword.data)
             current_user.set_password(form.newpassword.data)

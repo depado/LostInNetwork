@@ -82,10 +82,14 @@ class Device(db.Model):
     def decrypt_password(self):
         return PasswordManager.decrypt_string_from_session_pwdh(self.password)
 
+    def decrypt_enapassword(self):
+        return PasswordManager.decrypt_string_from_session_pwdh(self.enapassword)
+
     def save(self, encrypt=True):
         self.date = datetime.now()
         if encrypt:
             self.password = PasswordManager.encrypt_string_from_session_pwdh(self.password)
+            self.enapassword = PasswordManager.encrypt_string_from_session_pwdh(self.enapassword)
         db.session.add(self)
         try:
             db.session.commit()
