@@ -46,7 +46,7 @@ def read_cve():
                 tmp_desc=cve_search.group(3)
 
                 # Filter Cisco devices ( filter Cisco/IOS )
-                cisco_search=re.search('Cisco| IOS ', tmp_desc )
+                cisco_search=re.search('Cisco| IOS ', tmp_desc)
                 if cisco_search:
                     cve_id=tmp_id
                     cve[cve_id]={}
@@ -60,10 +60,10 @@ def read_cve():
                 tab=line.split('|')
                 for j in tab:
                     # Search url
-                    url_search=re.search('\w+:(http://.*?)[ ",]',j)
+                    url_search=re.search('\w+:(http://.*?)[ ",]', j)
                     if url_search:
                         try:
-                            cve[cve_id]['url']+='\n'+url_search.group(1)
+                            cve[cve_id]['url'] += '\n' + url_search.group(1)
                         except Exception as e:
                             app.logger.info(e)
                             cve[cve_id]['url']=url_search.group(1)
