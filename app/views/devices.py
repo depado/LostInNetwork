@@ -4,8 +4,8 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required
 
 from app import app
-from app.forms import DeviceForm, DeviceTypeForm, DeviceTypeCategoryForm, LanForm, ManufacturerForm
-from app.models import Device, DeviceType, DeviceTypeCategory, Lan, Manufacturer
+from app.forms import DeviceForm, DeviceTypeForm, LanForm, ManufacturerForm
+from app.models import Device, DeviceType, Lan, Manufacturer
 
 
 @app.route('/devices', methods=['GET', 'POST'])
@@ -25,16 +25,13 @@ def devices():
     lan_form = LanForm(prefix="lan")
     device_form = DeviceForm(prefix="device")
     devicetype_form = DeviceTypeForm(prefix="devicetype")
-    devicetypecategory_form = DeviceTypeCategoryForm(prefix="devicetypecategory")
     manufacturer_form = ManufacturerForm(prefix="manufacturer")
     form_dict = dict(lan_form=lan_form, device_form=device_form, devicetype_form=devicetype_form,
-                     devicetypecategory_form=devicetypecategory_form,
                      manufacturer_form=manufacturer_form)
 
     if request.method == 'POST':
         device_form.chain_push_new(request=request, model=Device)
         devicetype_form.chain_push_new(request=request, model=DeviceType)
-        devicetypecategory_form.chain_push_new(request=request, model=DeviceTypeCategory)
 
         lan_form.chain_push_new(request=request, model=Lan)
         manufacturer_form.chain_push_new(request=request, model=Manufacturer)
@@ -71,34 +68,27 @@ def inspect_device(device_id):
 
     device_form = DeviceForm(prefix="device", obj=device)
     devicetype_form = DeviceTypeForm(prefix="devicetype", obj=devicetype)
-    devicetypecategory_form = DeviceTypeCategoryForm(prefix="devicetypecategory", obj=devicetype.devicetypecategory)
     lan_form = LanForm(prefix="lan", obj=device.lan)
     manufacturer_form = ManufacturerForm(prefix="manufacturer", obj=devicetype.manufacturer)
 
     new_lan_form = LanForm(prefix="new-lan")
     new_devicetype_form = DeviceTypeForm(prefix="new-devicetype")
-    new_devicetypecategory_form = DeviceTypeCategoryForm(prefix="new-devicetypecategory")
     new_manufacturer_form = ManufacturerForm(prefix="new-manufacturer")
 
     if request.method == 'POST':
         device_form.chain_push_modified(request=request, model=Device, obj=device)
         devicetype_form.chain_push_modified(request=request, model=DeviceType, obj=devicetype)
-        devicetypecategory_form.chain_push_modified(request=request, model=DeviceTypeCategory,
-                                                    obj=devicetype.devicetypecategory)
         manufacturer_form.chain_push_modified(request=request, model=Manufacturer, obj=devicetype.manufacturer)
         lan_form.chain_push_modified(request=request, model=Lan, obj=device.lan)
 
         new_devicetype_form.chain_push_new(request=request, model=DeviceType)
-        new_devicetypecategory_form.chain_push_new(request=request, model=DeviceTypeCategory)
         new_lan_form.chain_push_new(request=request, model=Lan)
         new_manufacturer_form.chain_push_new(request=request, model=Manufacturer)
 
     form_dict = dict(lan_form=lan_form, device_form=device_form, devicetype_form=devicetype_form,
-                     devicetypecategory_form=devicetypecategory_form,
                      manufacturer_form=manufacturer_form, new_lan_form=new_lan_form,
                      new_devicetype_form=new_devicetype_form,
-                     new_manufacturer_form=new_manufacturer_form,
-                     new_devicetypecategory_form=new_devicetypecategory_form)
+                     new_manufacturer_form=new_manufacturer_form)
 
     return render_template("inspect_device.html", device=device, active_page="devices",
                            clear_pwd=device.decrypt_password(),**form_dict)

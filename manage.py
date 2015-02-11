@@ -14,9 +14,13 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_db():
     db.create_all()
-    from app.models import User
+    from app.models import User, Manufacturer, DeviceType
     user = User(username='root', password='root', active=True, superuser=True)
     user.save()
+    m = Manufacturer(name="Cisco")
+    m.save()
+    d = DeviceType(manufacturer=m, category="Router", name="Cisco Router")
+    d.save()
 
 
 if __name__ == '__main__':

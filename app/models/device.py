@@ -5,42 +5,6 @@ from datetime import datetime
 from app import app, db
 from app.utils.crypto import PasswordManager
 
-class DeviceTypeCategory(db.Model):
-    """
-    Represents the Category of a DeviceType
-    Example : Firewall, Router, etc...
-    """
-    friendly_name = "Device Type Category"
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Enum('default', 'switch2', 'switch3', 'router', 'firewall', name='type'), default='default')
-    devicetypes = db.relationship('DeviceType', backref='devicetypecategory', lazy='dynamic')
-
-    def save(self):
-        db.session.add(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during save operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def delete(self):
-        db.session.delete(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during delete operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def __repr__(self):
-        return self.name
-
 
 class DeviceType(db.Model):
     """
@@ -53,7 +17,7 @@ class DeviceType(db.Model):
     name = db.Column(db.String(50), unique=True)
 
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.id'))
-    devicetypecategory_id = db.Column(db.Integer, db.ForeignKey('device_type_category.id'))
+    category = db.Column(db.Enum('Router', 'Level 2 Switch', 'Level 3 Switch', 'Firewall', name='type'), default='Router')
 
     devices = db.relationship('Device', backref='devicetype', lazy='dynamic')
 

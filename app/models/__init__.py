@@ -3,7 +3,7 @@
 # Model Imports
 from .user import User, Permission
 from .lan import Lan
-from .device import Device, DeviceType, DeviceTypeCategory
+from .device import Device, DeviceType
 from .manufacturer import Manufacturer
 from .risk import Risk, RiskLevel, RiskType
 from .configuration import Configuration, ConfigurationValues
