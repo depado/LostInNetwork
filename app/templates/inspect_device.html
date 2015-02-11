@@ -15,7 +15,10 @@
                         <li><b>Name</b> : {{ device.name }}</li>
                         <li><b>IP</b> : {{ device.ip }}</li>
                         <li><b>Last Modification</b> : {{ device.date }}</li>
+                        <li><b>Username</b> : {{ device.username }}</li>
                         <li><b>Password</b> : <span class="pwd_field"><b>Encrypted / Hidden</b></span></li>
+                        <li><b>Ena Username</b> : {{ device.enausername }}</li>
+                        <li><b>Ena Password</b> : <span class="enapwd_field"><b>Encrypted / Hidden</b></span></li>
                         <li><b>Lan</b> <a href="#" id="show_lan_button"><i class="glyphicon glyphicon-cog"></i></a></li>
                         <ul>
                             <li><b>ID</b> : {{ device.lan.id }}</li>
@@ -42,7 +45,10 @@
                 <ul>
                     <li><b>Name</b> : {{ device.name }}</li>
                     <li><b>IP</b> : {{ device.ip }}</li>
+                    <li><b>Username</b> : {{ device.username }}</li>
                     <li><b>Password</b> : <span class="pwd_field"><b>Encrypted / Hidden</b></span></li>
+                    <li><b>Ena Username</b> : {{ device.enausername }}</li>
+                    <li><b>Ena Password</b> : <span class="enapwd_field"><b>Encrypted / Hidden</b></span></li>
                     <li><b>Lan</b> : {{ device.lan.name }}</li>
                     <li><b>Device Type</b> : {{ device.devicetype.name }}</li>
                     <li><b>Device Type Category</b> : {{ device.devicetype.category }}</li>
@@ -103,6 +109,15 @@
         $(".pwd_field").each(function (i, el) {
             if(el.innerHTML === "<b>Encrypted / Hidden</b>") {
                 el.innerHTML = "{{ clear_pwd }}";
+                $("#display-password").text("Hide Password");
+            } else {
+                el.innerHTML = "<b>Encrypted / Hidden</b>";
+                $("#display-password").text("Show Password");
+            }
+        });
+        $(".enapwd_field").each(function (i, el) {
+            if(el.innerHTML === "<b>Encrypted / Hidden</b>") {
+                el.innerHTML = "{{ clear_enapwd }}";
                 $("#display-password").text("Hide Password");
             } else {
                 el.innerHTML = "<b>Encrypted / Hidden</b>";
