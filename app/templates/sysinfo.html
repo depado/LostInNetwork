@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% include 'menu.html' %}
+    <div class="container-fluid">
+        <div class="col-lg-6">
+            <div class="well setting transparent white">
+                <legend class="clear-legend">System Information</legend>
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="col-lg-3"><b>Distribution</b></div>
+                        <div class="col-lg-9">{{ sysinfo.distrib }}</div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="col-lg-3"><b>Uname</b></div>
+                        <div class="col-lg-9">{{ sysinfo.uname }}</div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="col-lg-3"><b>Uptime</b></div>
+                        <div class="col-lg-9">{{ sysinfo.uptime }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

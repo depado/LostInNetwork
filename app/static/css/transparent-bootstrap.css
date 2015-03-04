@@ -17,6 +17,12 @@
     border:none;
 }
 
+.panel-transparent {
+    background: rgba(0,0,0,0.1);
+    color: rgba(255, 255, 255, 1);
+    border:none;
+}
+
 .dark {
     color: rgba(255, 255, 255, 1);
     background: rgba(51, 51, 51, 0.5);
@@ -137,6 +143,22 @@
   background: rgba(0,0,0,0.1);
 }
 
+a {
+    text-decoration: none;
+}
+
 a:hover {
     color: #FFFFFF;
+    text-decoration: none;
 }
+
+a:active {
+    outline: 0;
+    text-decoration: none;
+}
+
+a:focus {
+    outline: 0;
+    text-decoration: none;
+}
+

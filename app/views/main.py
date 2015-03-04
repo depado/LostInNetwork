@@ -17,6 +17,17 @@ def index():
     return render_template("index.html")
 
 
+@app.route('/sysinfo', methods=['GET'])
+@login_required
+def sysinfo():
+    app.sysinfo.update()
+    return render_template("sysinfo.html", sysinfo=app.sysinfo, active_page="sysinfo")
+
+@app.route('/help', methods=['GET'])
+def help():
+    return render_template("help.html", active_page="help")
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user is not None and current_user.is_authenticated():
@@ -29,12 +40,6 @@ def login():
         return redirect(url_for('index'))
     else:
         return render_template("login.html", form=form)
-
-
-@app.route("/test", methods=['GET'])
-def test():
-    print(PasswordManager.decrypt_string_from_session_pwdh(Device.query.all()[0].password))
-    return "OK"
 
 
 @app.route('/logout', methods=['GET'])
