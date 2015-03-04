@@ -110,6 +110,66 @@
                     </div>
                 </div>
             </div>
+            <div class="panel panel-transparent">
+                <div class="panel-heading" role="tab" id="headingFive">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
+                           aria-expanded="false" aria-controls="collapseFive">
+                            What technologies are behind LIN ?
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+                    <div class="panel-body">
+                        LIN has been developped using the Flask micro-framework. So the language behind LIN is Python.
+                        The current and recommended version is Python 3.4. <br />
+                        Many plugins are used to make the developpment of LIN easier.<br /><br />
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask</u></p></div>
+                                <div class="col-md-10"><p>The core micro-framework of LIN</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-Login</u></p></div>
+                                <div class="col-md-10"><p>A plugin to Flask to allow more control over the user management.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-Migrate</u></p></div>
+                                <div class="col-md-10"><p>Currently unused. Allows database migration using Alembic.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-Script</u></p></div>
+                                <div class="col-md-10"><p>Allows more control over the application command line interface.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-SQLAlchemy</u></p></div>
+                                <div class="col-md-10"><p>SQLAlchemy Flask plugin. Used as the ORM of LIN.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-WTF</u></p></div>
+                                <div class="col-md-10"><p>WhatTheForm Flask plugin. Integrating WTForms with a Flask app.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>pycrypto</u></p></div>
+                                <div class="col-md-10"><p>Cryptographic module that provides all the desired security features
+                                used by LIN.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Jinja2</u></p></div>
+                                <div class="col-md-10"><p>The templating language used by LIN. (default with Flask)</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>pexpect</u></p></div>
+                                <div class="col-md-10"><p>Allows to fake user inputs. This is used to send commands to devices.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>psycopg2</u></p></div>
+                                <div class="col-md-10"><p>PostgreSQL database suport.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
