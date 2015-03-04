@@ -10,9 +10,9 @@
         </ul>
         <ul class="nav navbar-nav pull-right">
             <li {% if active_page == "devices" %}class="active"{% endif %}><a href="{{ url_for('devices') }}">Devices</a></li>
-            <li {% if active_page == "settings" %}class="active"{% endif %}><a href="{{ url_for('settings') }}">Settings</a></li>
-            <li {% if active_page == "updates" %}class="active"{% endif %}><a href="{{ url_for('updates') }}">Updates</a></li>
+            <li {% if active_page == "tasks" %}class="active"{% endif %}><a href="{{ url_for('tasks') }}">Tasks</a></li>
             <li {% if active_page == "sysinfo" %}class="active"{% endif %}><a href="{{ url_for('sysinfo') }}">System Information</a></li>
+            <li {% if active_page == "settings" %}class="active"{% endif %}><a href="{{ url_for('settings') }}">Settings</a></li>
             <li {% if active_page == "help" %}class="active"{% endif %}><a href="{{ url_for('help') }}">Help</a></li>
             <li><a href="{{ url_for('logout') }}">Logout</a></li>
         </ul>

@@ -18,8 +18,8 @@ class Configuration(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(100), unique=True)
 
-    devices = db.relationship('Device', backref='configuration', lazy='dynamic')
     risks = db.relationship('Risk', secondary=configuration_risks, backref=db.backref('configurations', lazy='dynamic'))
+    device_id = db.Column(db.Integer, db.ForeignKey('device.id'))
 
     def save(self):
         db.session.add(self)
