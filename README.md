@@ -17,6 +17,7 @@ Create the virtualenv and install the dependencies as follow :
     source venv/bin/activate
     pip install -r requirements.txt
 	mkdir tmp/ log/ data/
+    touch log/lostinnetwork.log
 There are some things to note here. First of all you may check what Python version the virtualenv software will install. It must be a 3.x version. If it's not, please install Python 3.x (the latest stable version will do) and make sure the python version installed in the virtualenv fits. The command **may** be called virtualenv-3.x. Another thing is that maybe you don't have `pip` installed in your virtualenv. To fix that `easy_install pip`.  
 
 **All the following commands and things described in this README needs to be done or executed with the activated virtualenv. Otherwise it may not work at all or won't have the expected behaviour.**
