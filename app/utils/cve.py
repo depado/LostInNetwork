@@ -8,6 +8,43 @@ from app import app
 from app import db
 from app.models.vuln import VulnCve
 
+
+# BKP REGEX VERS
+#VERSION_PATTERN='^b\'(CVE[\d-]+),.*IOS (\d+\.\d+\.?\d*\(?\d*\)?[\d\w]*)\
+#( through | and )?(\d+\.\d+\.?\d*\(?\d*\)?[\d\w]*)?[, ].*$'
+
+def get_version(currentline):
+    """
+    get_version from cve
+    :return: list
+    """
+    line=str(currentline)
+    VERSION_PATTERN='^b\'(CVE[\d-]+),.*IOS (\d+\.\d+\.?\d*).*?\
+ (through|and)? (\d+\.\d+\.?\d*)?.*$'
+    version2 = []
+    separator = ''
+    version = ''
+    multi_version_search=re.search( VERSION_PATTERN, line)
+    if multi_version_search:
+        cve=multi_version_search.group(1)
+        version2.append(multi_version_search.group(2))
+        separator = multi_version_search.group(3)
+        if multi_version_search.group(4):
+            version2.append(multi_version_search.group(4))
+
+    if separator == 'through':
+        version = '-'.join(version2)
+    elif separator == 'and':
+        version = ','.join(version2)
+    else:
+        for vers in version2:
+            if vers: 
+                version = str(vers)
+         
+#    for vers in version2:
+#        version += vers + ' ' 
+    return str(version)
+
 def down_cve():
     """
     Download CVE
@@ -50,7 +87,7 @@ def read_cve():
                 if cisco_search:
                     cve_id=tmp_id
                     cve[cve_id]={}
-                    cve[cve_id]['version']='IOS 12.24'
+                    cve[cve_id]['version']=get_version(line)
                     cve[cve_id]['status']=tmp_status
                     cve[cve_id]['description']=tmp_desc
                 else:
