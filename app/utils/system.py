@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from psutil import cpu_percent, virtual_memory, disk_usage
 import platform
 import subprocess
 
@@ -26,3 +27,21 @@ class SystemInformation(object):
 
     def update(self):
         self.uptime = subprocess.check_output(['uptime'], universal_newlines=True)
+
+
+def get_cpu_load():
+    """ Returns the CPU Load """
+    load = cpu_percent(interval=0, percpu=False)
+    return load
+
+
+def get_vmem():
+    """ Returns the Ram percentage """
+    mem = virtual_memory().percent
+    return mem
+
+
+def get_disk_usage():
+    """ Returns the Disk usage """
+    disk = disk_usage('/').percent
+    return disk

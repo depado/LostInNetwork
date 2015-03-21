@@ -8,6 +8,8 @@ First of all, download the archive or clone the repository. You will have nearly
 **Required Python version : Python 3.x**  
 *For now this version only supports Python 3.x. This may change later.*   
 
+Python3.4 can be really messy to install on disitributions like Ubuntu or Debian. I'll create a guide or an automatic installation script later.  
+
 If you don't have the `virtualenv` software on your computer you might want to install it.  
 
 Create the virtualenv and install the dependencies as follow :

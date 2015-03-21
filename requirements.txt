@@ -8,11 +8,15 @@ Flask-SQLAlchemy==2.0
 Flask-WTF==0.10.3
 infinity==1.3
 intervals==0.3.1
+ipython==2.4.1
 itsdangerous==0.24
 Jinja2==2.7.3
 Mako==1.0.0
 MarkupSafe==0.23
+pep8==1.6.1
 pexpect==3.3
+psutil==2.2.1
+psycopg2==2.5.4
 pycrypto==2.6.1
 six==1.9.0
 SQLAlchemy==0.9.8
@@ -22,4 +26,3 @@ Werkzeug==0.9.6
 WTForms==2.0.1
 WTForms-Alchemy==0.13.0
 WTForms-Components==0.9.7
-psycopg2==2.5.4
