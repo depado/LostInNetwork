@@ -3,6 +3,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
+from celery import Celery
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask import Flask
@@ -23,6 +24,8 @@ handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 
 db = SQLAlchemy(app)
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['CELERY_RESULT_BACKEND'])
 
 login_manager = LoginManager()
 login_manager.init_app(app)
