@@ -26,7 +26,7 @@ PROMPT_REGEX_JUNOSEDIT = "\r\n[^\r\n ]+@[^\r\n]+[\\\]#[ ]*"
 PROMPT_REGEX_BLUECOAT = "\r\n[^\r\n ]+>[ ]*"  # 20121312-YRG: need to veri
 PROMPT_REGEX_BLUECOATENABLE = "\r\n[^\r\n ]+#[ ]*"  # 20121312-YRG: need t
 PROMPT_REGEX_BLUECOATCONFIG = "\r\n[^\r\n ]+#([^)]+)[ ]*"  # 20121312-YRG:
-# PROMPT_REGEX_CISCO = "\r\n[\r]*[^\r\n\*># ]+[>#:][ ]*";
+PROMPT_REGEX1_CISCO = "\r\n[\r]*[^\r\n\*># ]+[>#:][ ]*";
 PROMPT_REGEX_CISCO = ".*[>#:][ ]*"  # 20152701-ALD
 PROMPT_REGEX_CISCOASA = "\r\n\r[^\r\n\*># ]+[>#] "
 PROMPT_REGEX_CISCOENABLE = "\r\n[\r]*[^\r\n\*# ]+#[ ]*"
@@ -36,13 +36,12 @@ PROMPT_REGEX_TIPPINGPOINT = "[\r\n]+[^\r\n ]+#[ ]*"  # TippingPoint is
 PROMPT_REGEX_IRONPORT = "\r\n[\r]*[^\r\n\*># ]+>[ ]*"
 PROMPT_REGEX_NETSCALER = "\r\n[\r]*>[ ]*"
 
-
 # Definition command to send depend to the devicetype
 Regex = {
     'Cisco': (PROMPT_REGEX_CISCO, PROMPT_REGEX_CISCOENABLE),
     'ciscoASA': (PROMPT_REGEX_CISCOASA, PROMPT_REGEX_CISCOENABLE)
 }
-ComCiscoISR = {'sh ip route': 'route', 'sh run': 'run'}
+ComCiscoISR = {'sh ip route': 'route', 'sh run': 'run', 'sh version' : 'version'}
 
 directory = 'data/'
 
@@ -82,13 +81,10 @@ def mainsendcommand():
 
     for device in Device.query.all():
         password = PasswordManager.decrypt_string(device.password, PasswordManager.generate_pwdh_from_password("root"))
-        username = 'admin'
+        username = device.username
         method = 'ssh'
-        enable = 'enablepass'
-        #enapassword = PasswordManager.decrypt_string(device.enapassword,PasswordManager.generate_pwdh_from_password("root"))
-        print(device.name + ' ' + device.ip + ' ' + username + ' ' + password + ' ' + device.devicetype.name)
-        #print(device.method + ' '+ device.name + ' ' + device.ip + ' ' + device.username + ' ' + passwrd + ' ' + enapassword + ' ' + device.devicetype.name)
-        #Device[0].decrypt_password(
+        enable = PasswordManager.decrypt_string(device.enapassword, PasswordManager.generate_pwdh_from_password("root"))
+        print(device.name + ' ' + device.ip + ' ' + username + ' ' + password + ' ' + enable + ' ' + device.devicetype.name)
         nameList.append(method + "," + device.name + "," + device.ip + "," + username + "," + password + "," + enable + "," + device.devicetype.manufacturer.name)
 
 
@@ -137,7 +133,8 @@ def send(data):
         app.logger.info('connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' whith ' + sMethod)
         for key in ComUnix:
             child = pexpect.spawn('scp %s@%s:%s %s/%s-%s.txt' % (sUsername, sIp, key, directory, sHostname, ComUnix[key]))
-            q = child.expect(['assword:',r"yes/no",pexpect.TIMEOUT,pexpect.EOF], timeout=30)
+            #q = child.expect(['assword:',r"yes/no",pexpect.TIMEOUT,pexpect.EOF], timeout=30)
+            q = child.expect(['assword:',PROMPT_ADD_KNOWN_HOST,pexpect.TIMEOUT,pexpect.EOF], timeout=30)
             if q == 0:
                 child.sendline(sPassword)
             elif q == 1:
@@ -178,29 +175,40 @@ def send(data):
         if m == 0:
             child.sendline(sPassword)
         elif m == 1:
+            child.sendline(sPassword)
+        elif m == 2:
             derror[sHostname] = 'TIMEOUT'
             return derror
-        elif m == 2:
+        elif m == 3:
+            print ('maybe here')
             derror[sHostname] = 'EOF'
             return derror
+        else:
+            child.sendline(sPassword)
         q = child.expect(['>', '[Pp]assword:', pexpect.TIMEOUT, pexpect.EOF])
+        #q = child.expect([PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
         if q == 0:
+            print ('send enable 11')
             child.sendline('enable')
         elif q == 1:
             derror[sHostname] = 'wrong password'
-            return derror
         elif q == 2:
+            print ('maybe here TIMEOUT')
             derror[sHostname] = 'TIMEOUT'
             return derror
         elif q == 3:
             derror[sHostname] = 'EOF'
             return derror
+        else:
+            print ('send enable 2')
+            child.sendline('enable')
         q = child.expect(['assword:', '>', pexpect.TIMEOUT, pexpect.EOF])
         if q == 0:
             child.sendline(sEnable)
         elif q == 1:
             child.sendline(sEnable)
         elif q == 2:
+            print ('maybe here TIMEOUT 2')
             derror[sHostname] = 'TIMEOUT'
             return derror
         elif q == 3:
