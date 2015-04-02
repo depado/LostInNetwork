@@ -24,6 +24,7 @@ def sysinfo():
     app.sysinfo.update()
     return render_template("sysinfo.html", sysinfo=app.sysinfo, active_page="sysinfo")
 
+
 @app.route('/help', methods=['GET'])
 def help():
     return render_template("help.html", active_page="help")

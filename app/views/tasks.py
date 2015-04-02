@@ -17,6 +17,6 @@ def tasks():
             data = read_cve()
             update_cve(data)
             flash("Update finished", "info")
-            return redirect(url_for('updates'))
+            return redirect(url_for('tasks'))
 
     return render_template("tasks.html", active_page="tasks")
