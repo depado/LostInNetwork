@@ -74,6 +74,7 @@ class ConfigurationValues(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.String(15))
     model = db.Column(db.String(20))
+    uptime = db.Column(db.String(50))
     configuration_id = db.Column(db.Integer(), db.ForeignKey('configuration.id'))
     
     # Vulnerability fields
