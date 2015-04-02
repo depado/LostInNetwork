@@ -8,25 +8,19 @@ from app import app
 from app import db
 from app.models.vuln import VulnCve
 
+VERSION_PATTERN='^b\'(CVE[\d-]+),.*IOS (\d+\.\d+\.?\d*).*?(through|and)? (\d+\.\d+\.?\d*)?.*$'
 
-# BKP REGEX VERS
-#VERSION_PATTERN='^b\'(CVE[\d-]+),.*IOS (\d+\.\d+\.?\d*\(?\d*\)?[\d\w]*)\
-#( through | and )?(\d+\.\d+\.?\d*\(?\d*\)?[\d\w]*)?[, ].*$'
 
 def get_version(currentline):
     """
     get_version from cve
-    :return: list
     """
     line=str(currentline)
-    VERSION_PATTERN='^b\'(CVE[\d-]+),.*IOS (\d+\.\d+\.?\d*).*?\
- (through|and)? (\d+\.\d+\.?\d*)?.*$'
     version2 = []
     separator = ''
     version = ''
-    multi_version_search=re.search( VERSION_PATTERN, line)
+    multi_version_search=re.search(VERSION_PATTERN, line)
     if multi_version_search:
-        cve=multi_version_search.group(1)
         version2.append(multi_version_search.group(2))
         separator = multi_version_search.group(3)
         if multi_version_search.group(4):
@@ -38,11 +32,8 @@ def get_version(currentline):
         version = ','.join(version2)
     else:
         for vers in version2:
-            if vers: 
+            if vers:
                 version = str(vers)
-         
-#    for vers in version2:
-#        version += vers + ' ' 
     return str(version)
 
 def down_cve():
@@ -125,7 +116,6 @@ def update_cve(cve_dict):
         if id_count != 0:
             sqlreq = db.session.query(VulnCve).filter(VulnCve.cve_id == cve_id).first()
             if sqlreq:
-                app.logger.info('{cve_id} already exist in db'.format(cve_id=cve_id))
                 continue
 
 

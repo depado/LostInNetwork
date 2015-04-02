@@ -5,4 +5,4 @@ from .devices import devices
 from .tasks import tasks
 from .settings import settings
 from .ajax import ajax_system
-from .async import long_task, test_bg_task
+from .async import async_cve_update, async_cve_update_status
