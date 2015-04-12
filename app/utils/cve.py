@@ -97,11 +97,6 @@ def cve_async(self):
         sqlreq = db.session.query(db.func.count(VulnCve.id)).first()
         id_count=sqlreq[0]
         self.update_state(state='PROGRESS', meta={'message': "Start Updating CVE", 'percentage': 20})
-        if id_count > 0:
-            app.logger.info('Table vulncve is not empty')
-        else:
-            app.logger.info('Table vulncve is empty')
-
         db_fields=('description', 'status', 'url')
         total = len(cve_dict)
         for current, cve_id in enumerate(sorted(cve_dict)):
@@ -111,9 +106,10 @@ def cve_async(self):
                     self.update_state(state='PROGRESS', meta={
                         'message': "Adding CVE {cve_id} ({current}/{total})".format(cve_id=cve_id, current=current,
                                                                                     total=total),
-                        'percentage': 5
+                        'percentage': current / total * 100 + 20 - (current / total * 20)
                     })
                     continue
+
             for f in db_fields:
                 if f not in cve_dict[cve_id].keys():
                     cve_dict[cve_id][f] = ''

@@ -49,7 +49,7 @@
                 } else {
                     $(status_div.childNodes[3]).text('Result: ' + data['state']);
                 }
-            } else {
+            } else if (percent != 100) {
                 setTimeout(function() {
                     update_progress();
                 }, 1000);
