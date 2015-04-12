@@ -33,7 +33,7 @@
     {{ form.hidden_tag() }}
     {% for field in form %}
         {% if "label" in field.description %}
-            {{ render_fk_field(field, white=white, add_button=add_mode) }}
+            {{ render_fk_field(field, white=white, add_button=field.description["add_mode"] if "add_mode" in field.description else add_mode) }}
         {% elif "placeholder" in field.description %}
             {{ render_field(field) }}
         {% endif %}

@@ -2,11 +2,13 @@
 
 from datetime import datetime
 
-from app import app, db
+from app import db
 from app.utils.crypto import PasswordManager
 
+from .base import DbMixin
 
-class DeviceInterfaces(db.Model):
+
+class DeviceInterfaces(db.Model, DbMixin):
     """
     List all interfaces from network device.
     Link to configuration table with configuration_id
@@ -21,33 +23,11 @@ class DeviceInterfaces(db.Model):
     netmask = db.Column(db.String())
     configuration_id = db.Column(db.Integer, db.ForeignKey('configuration.id'))
 
-    def save(self):
-        db.session.add(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during save operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def delete(self):
-        db.session.delete(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during delete operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
     def __repr__(self):
         return self.name
 
 
-class DeviceRoutes(db.Model):
+class DeviceRoutes(db.Model, DbMixin):
     """
     Represent all routes for e device
     link to configuration with configuration_id
@@ -64,33 +44,11 @@ class DeviceRoutes(db.Model):
     configuration_id = db.Column(db.Integer(), db.ForeignKey(
         'configuration.id'))
 
-    def save(self):
-        db.session.add(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during save operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def delete(self):
-        db.session.delete(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during delete operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
     def __repr__(self):
         return self.name
 
 
-class DeviceType(db.Model):
+class DeviceType(db.Model, DbMixin):
     """
     Represents the Type of a Device.
     Contains FK to a Manufacturer and a DeviceTypeCategory.
@@ -106,31 +64,8 @@ class DeviceType(db.Model):
 
     devices = db.relationship('Device', backref='devicetype', lazy='dynamic')
 
-    def save(self):
-        db.session.add(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during save operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def delete(self):
-        db.session.delete(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during delete operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
     def __repr__(self):
         return self.name
-
 
 # Many to Manu Relationship between Risk and Device
 # A Device can be associated with many risks
@@ -142,7 +77,7 @@ device_risks = db.Table(
 )
 
 
-class Device(db.Model):
+class Device(db.Model, DbMixin):
     """
     Represents a Device, associated with a DeviceType, a Lan and a Configuration.
     A Device also has Risks associated to it.
@@ -177,26 +112,7 @@ class Device(db.Model):
         if encrypt:
             self.password = PasswordManager.encrypt_string_from_session_pwdh(self.password)
             self.enapassword = PasswordManager.encrypt_string_from_session_pwdh(self.enapassword)
-        db.session.add(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during save operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def delete(self):
-        db.session.delete(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during delete operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
+        super(Device, self).save()
 
     def __repr__(self):
         return self.name

@@ -11,14 +11,17 @@ from app.utils import down_cve, read_cve, update_cve
 CVE_KEY = "cve_task_uuid"
 CVE_LOCK = redis.Redis().lock("celery_cve_lock")
 
+SCAN_KEY = "scan_task_uuid"
+SCAN_LOCK = redis.Redis().lock("celery_scan_lock")
 
-def lock_available():
+
+def lock_available(lock):
     free_lock = False
     try:
-        free_lock = CVE_LOCK.acquire(blocking=False)
+        free_lock = lock.acquire(blocking=False)
     finally:
         if free_lock:
-            CVE_LOCK.release()
+            lock.release()
             return True
         else:
             return False
@@ -47,14 +50,19 @@ def async_cve(self):
 
 @app.route('/async_cve_update', methods=['POST'])
 def async_cve_update():
+    """
+    Starts the CVE update and set the lock.
+    """
     task = async_cve.apply_async()
     redis.Redis().set(CVE_KEY, task.id)
     return jsonify({'key': task.id})
 
 @app.route('/async_update_cve/status', methods=['GET'])
 def async_cve_update_status():
-
-    if not lock_available():
+    """
+    Ajax call to get the CVE Update status
+    """
+    if not lock_available(CVE_LOCK):
         task = async_cve.AsyncResult(redis.Redis().get(CVE_KEY))
         if task.state == 'PENDING':
             response = {

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from app import app, db
+from app import db
+
+from .base import DbMixin
 
 configuration_risks = db.Table(
     'configuration_risks',
@@ -9,7 +11,7 @@ configuration_risks = db.Table(
 )
 
 
-class Configuration(db.Model):
+class Configuration(db.Model, DbMixin):
     """
     Represents a Configuration file
     """
@@ -21,51 +23,30 @@ class Configuration(db.Model):
     risks = db.relationship('Risk', secondary=configuration_risks, backref=db.backref('configurations', lazy='dynamic'))
     device_id = db.Column(db.Integer, db.ForeignKey('device.id'))
 
-    def save(self):
-        db.session.add(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during save operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def delete(self):
-        db.session.delete(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during delete operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
     def __repr__(self):
         return self.path
 
-    # Intermediate vuln table
+# Intermediate vuln table
 configurationvalues_vulnbasic = db.Table(
     'configurationvalues_vulnbasic',
     db.Column('configurationvalues_id', db.Integer, db.ForeignKey('configurationvalues.id')),
     db.Column('vulnbasic_id', db.Integer, db.ForeignKey('vulnbasic.id')),
-    )
+)
     
 configurationvalues_vulnperm = db.Table(
     'configurationvalues_vulnperm',
     db.Column('configurationvalues_id', db.Integer, db.ForeignKey('configurationvalues.id')),
     db.Column('vulnperm_id', db.Integer, db.ForeignKey('vulnperm.id')),
-    )
+)
     
 configurationvalues_vulncve = db.Table(
     'configurationvalues_vulncve',
     db.Column('configurationvalues_id', db.Integer, db.ForeignKey('configurationvalues.id')),
     db.Column('vulncve_id', db.Integer, db.ForeignKey('vulncve.id')),
-    )
+)
 
-class ConfigurationValues(db.Model):
+
+class ConfigurationValues(db.Model, DbMixin):
     """ 
     Represents value from config file
     """
@@ -80,28 +61,6 @@ class ConfigurationValues(db.Model):
     vulncve = db.relationship('VulnCve', secondary=configurationvalues_vulncve, backref=db.backref('configurations', lazy='dynamic'))
     vulnbasic = db.relationship('VulnBasic', secondary=configurationvalues_vulnbasic, backref=db.backref('configurations', lazy='dynamic'))
     vulnperm = db.relationship('VulnPerm', secondary=configurationvalues_vulnperm, backref=db.backref('configurations', lazy='dynamic'))
-    
-    def save(self):
-        db.session.add(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during save operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
-
-    def delete(self):
-        db.session.delete(self)
-        try:
-            db.session.commit()
-        except Exception as e:
-            app.logger.error("Error during delete operation {}".format(e))
-            app.logger.exception()
-            db.session.rollback()
-            return False
-        return True
 
     def __repr__(self):
         return self.name

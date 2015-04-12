@@ -47,6 +47,13 @@ DeviceForm = model_form(Device, base_class=CustomForm, db_session=db.session, fi
             'placeholder': "Ena Password"
         },
     },
+    'method': {
+        'validators': [DataRequired()],
+        'description': {
+            'label': "Method",
+            'add_mode': False
+        }
+    },
     'devicetype': {
         'validators': [DataRequired()],
         'description': {
