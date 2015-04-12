@@ -9,7 +9,7 @@
             </a>
         </div>
     </div>
-    <div id="row-progress-cve" class="row">
+    <div id="row-progress-cve" class="row" hidden>
         <div class="well transparent settings">
             <div class="progress">
                 <div id="progress-cve" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0"
@@ -45,16 +45,11 @@
             $('#progress-message').text(percent + "% " + data['message']);
             if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                 if ('result' in data) {
-                    // show result
                     $(status_div.childNodes[3]).text('Result: ' + data['new']);
-                }
-                /*
-                else {
-                    // something unexpected happened
+                } else {
                     $(status_div.childNodes[3]).text('Result: ' + data['state']);
-                }*/
-            }
-            else {
+                }
+            } else {
                 setTimeout(function() {
                     update_progress();
                 }, 1000);
