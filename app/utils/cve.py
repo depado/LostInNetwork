@@ -47,16 +47,13 @@ def cve_async(self):
     have_lock = False
     try:
         have_lock = CVE_LOCK.acquire(blocking=False)
-        self.update_state(state='PROGRESS', meta={'message': "Started CVE Update", 'percentage': 5})
         self.update_state(state='PROGRESS', meta={'message': "Downloading CVE", 'percentage': 5})
         try:
             url=app.config.get('CVE_URL')
             outfile=app.config.get('CVE_GZ')
             req=urllib.request.Request(url)
             r=urllib.request.urlopen(req)
-            app.logger.info('GET %s', url)
             gz_data=r.read()
-            app.logger.info('write cve list to %s', outfile)
             with open(outfile, 'wb') as g:
                 g.write(gz_data)
         except Exception as e:
@@ -65,7 +62,6 @@ def cve_async(self):
 
         self.update_state(state='PROGRESS', meta={'message': "Reading Downloaded CVE", 'percentage': 15})
         cve={}
-        app.logger.info('opening %s', app.config.get('CVE_GZ'))
         with gzip.open(app.config.get('CVE_GZ'), 'r') as f:
             for line in f:
                 line=str(line)
@@ -118,12 +114,9 @@ def cve_async(self):
                         'percentage': 5
                     })
                     continue
-
-
             for f in db_fields:
                 if f not in cve_dict[cve_id].keys():
                     cve_dict[cve_id][f] = ''
-
             obj=VulnCve()
             obj.cve_id=cve_id
             for entry in cve_dict[cve_id]:
