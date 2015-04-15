@@ -5,7 +5,7 @@ import redis
 from flask import jsonify
 
 from app import app
-from app.utils.cve import cve_async, CVE_LOCK, CVE_KEY
+from app.tasks.cve import cve_async, CVE_LOCK, CVE_KEY
 
 SCAN_KEY = "scan_task_uuid"
 SCAN_LOCK = redis.Redis().lock("celery_scan_lock")
