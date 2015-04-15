@@ -6,3 +6,5 @@ from .tasks import tasks
 from .settings import settings
 from .ajax import ajax_system
 from .async import async_cve_update, async_cve_update_status
+from .configurations import configurations, delete_configuration, inspect_configuration
+from .analysis import analysis

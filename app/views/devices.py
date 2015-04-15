@@ -6,6 +6,7 @@ from flask_login import login_required
 from app import app
 from app.forms import DeviceForm, DeviceTypeForm, LanForm, ManufacturerForm
 from app.models import Device, DeviceType, Lan, Manufacturer
+from app.utils import flash_default_password
 
 
 @app.route('/devices', methods=['GET', 'POST'])
@@ -22,6 +23,7 @@ def devices():
     The value will be : 
         device-save-btn
     """
+    flash_default_password()
     lan_form = LanForm(prefix="lan")
     device_form = DeviceForm(prefix="device")
     devicetype_form = DeviceTypeForm(prefix="devicetype")
@@ -63,6 +65,7 @@ def inspect_device(device_id):
     """
     Inspect and edit a device and all its related object.
     """
+    flash_default_password()
     device = Device.query.filter_by(id=device_id).first_or_404()
     devicetype = device.devicetype
 

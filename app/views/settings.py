@@ -7,12 +7,18 @@ from app.forms import SettingsForm
 from app.models import Device
 from app.utils.crypto import PasswordManager
 
-
 from app import app
+from app.utils import flash_default_password
+
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
+    """
+    Settings page. Allows the user to change his password.
+    Re-encrypts files and device passwords using the new one. (Can take some time in case there are many devices)
+    """
+    flash_default_password()
     form = SettingsForm(request.form)
     if form.validate_on_submit():
         if form.newpassword.data and form.oldpassword.data and form.repeat.data:
