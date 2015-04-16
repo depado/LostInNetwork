@@ -49,11 +49,11 @@ def cve_async(self):
         have_lock = CVE_LOCK.acquire(blocking=False)
         self.update_state(state='PROGRESS', meta={'message': "Downloading CVE", 'percentage': 5})
         try:
-            url=app.config.get('CVE_URL')
-            outfile=app.config.get('CVE_GZ')
-            req=urllib.request.Request(url)
-            r=urllib.request.urlopen(req)
-            gz_data=r.read()
+            url = app.config.get('CVE_URL')
+            outfile = app.config.get('CVE_GZ')
+            req = urllib.request.Request(url)
+            r = urllib.request.urlopen(req)
+            gz_data = r.read()
             with open(outfile, 'wb') as g:
                 g.write(gz_data)
         except Exception as e:

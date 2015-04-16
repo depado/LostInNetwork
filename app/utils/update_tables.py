@@ -41,7 +41,7 @@ def mainupdate():
                 if cisco_search:
                     model_version = cisco_search.group(1)
                     version_version = cisco_search.group(2)
-                    ConfigurationValues(version=version_version, model=model_version, configuration_id=conf.id).save()
+                    ConfigurationValues(version=version_version, model=model_version, configuration=conf).save()
         if crun:
             int_regex = re.compile('(?i)interface\s(.*)\n ip address (.*) (.*)\n.*\n (?!shutdown)', re.MULTILINE)
             with open(conf.path) as runfile:

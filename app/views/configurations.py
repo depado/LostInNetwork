@@ -4,6 +4,7 @@ from flask import render_template
 from flask_login import login_required
 
 from app import app
+from app.models import Device
 from app.utils import flash_default_password
 
 
@@ -11,6 +12,9 @@ from app.utils import flash_default_password
 @login_required
 def configurations():
     flash_default_password()
+    devices = Device.query.filter(configurations is not None).all()
+    for device in devices:
+        print(device)
     return render_template("configurations.html", active_page="configurations")
 
 

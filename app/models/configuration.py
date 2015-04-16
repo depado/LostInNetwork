@@ -23,6 +23,9 @@ class Configuration(db.Model, DbMixin):
     risks = db.relationship('Risk', secondary=configuration_risks, backref=db.backref('configurations', lazy='dynamic'))
     device_id = db.Column(db.Integer, db.ForeignKey('device.id'))
 
+    def __init__(self, *args, **kwargs):
+        super(Configuration, self).__init__()
+
     def __repr__(self):
         return self.path
 
