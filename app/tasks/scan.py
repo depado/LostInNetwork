@@ -3,17 +3,47 @@
 import celery
 import pexpect
 import redis
+import os
 
 from celery import group
+from datetime import datetime
 
-from app import app
-from app.models import Device
+from app import app, db
+from app.models import Device, Configuration
 from app.utils.prompt_regex import *
 from app.utils.crypto import PasswordManager
 
 
 SCAN_KEY = "scan_task_uuid"
 SCAN_LOCK = redis.Redis().lock("celery_scan_lock")
+
+ERRORS = {
+    0: 'TIMEOUT',
+    1: 'EOF',
+}
+
+
+def generate_pexpect_list(expected):
+    return [pexpect.TIMEOUT, pexpect.EOF] + expected
+
+
+def perror(device, derror, val):
+    if val in ERRORS:
+        derror[device.name] = ERRORS[val]
+        return True
+    return False
+
+
+def create_if_not_exist(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def get_path(device, key):
+    create_if_not_exist(os.path.join(app.config.get('CONF_DIR'), device.name))
+    create_if_not_exist(os.path.join(app.config.get('CONF_DIR'), device.name, datetime.now().strftime("%Y%m%d")))
+    return os.path.join(app.config.get('CONF_DIR'), device.name, datetime.now().strftime("%Y%m%d"), ComCiscoISR[key] +
+                        "-" + datetime.now().strftime("%H:%M:%S") + '.txt')
 
 
 @celery.task(bind=True)
@@ -25,12 +55,8 @@ def scan_all_devices_async(self, pwdh):
         jobs = list()
         for device in Device.query.all():
             jobs.append(scan_device_async.subtask((device, device.devicetype, device.devicetype.manufacturer, pwdh)))
-        job = group(jobs)
-        result = job.apply_async()
-        app.logger.info("Waiting for results")
+        result = group(jobs).apply_async()
         result.join()
-        app.logger.info(msg="{}".format(result))
-        app.logger.info(msg="Got all results")
     finally:
         if have_lock:
             SCAN_LOCK.release()
@@ -50,86 +76,65 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
     derror = {}
     if device.method in ['ssh', 'telnet']:
         if device.method == "ssh":
-            sTunnel = ('ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no -l ' + manufacturer.name + ' ')
-            app.logger.info('Connecting to ' + device.username + '@' + device.ip + ' ' + device.name + ' whith ' + device.method + ' and tunnel is ' + sTunnel)
-            child = pexpect.spawn(sTunnel + device.username + '@' + device.ip)
+            s_tunnel = 'ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no '
+            child = pexpect.spawn(s_tunnel + device.username + '@' + device.ip)
         else:
-            sTunnel = 'telnet '
-            app.logger.info('connecting to ' + device.ip + ' ' + device.name + ' whith ' + device.method + ' and tunnel is ' + sTunnel)
-            child = pexpect.spawn(sTunnel + device.ip)
-            m = child.expect([PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
-            if m == 0:
+            s_tunnel = 'telnet '
+            child = pexpect.spawn(s_tunnel + device.ip)
+            m = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO]))
+            if perror(device, derror, m):
+                return derror
+            if m == 2:
                 child.sendline(device.username)
-            elif m == 1:
-                derror[device.name] = 'TIMEOUT'
-                return derror
-            elif m == 2:
-                derror[device.name] = 'EOF'
-                return derror
-        m = child.expect([PROMPT_REGEX_CISCO, 'assword:', pexpect.TIMEOUT, pexpect.EOF])
-        if m in [0, 1]:
+        q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO, 'assword:']))
+        if perror(device, derror, q):
+            return derror
+        if q in [2, 3]:
             child.sendline(password)
-        elif m == 2:
-            derror[device.name] = 'TIMEOUT'
-            return derror
-        elif m == 3:
-            derror[device.name] = 'EOF'
-            return derror
         else:
             child.sendline(password)
-        q = child.expect(['>', '[Pp]assword:', pexpect.TIMEOUT, pexpect.EOF])
-        # q = child.expect([PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
-        if q == 0:
+        q = child.expect(generate_pexpect_list(['>', '[Pp]assword:']))
+        if perror(device, derror, q):
+            return derror
+        if q == 2:
             child.sendline('enable')
-        elif q == 1:
+        elif q == 3:
             derror[device.name] = 'wrong password'
-        elif q == 2:
-            derror[device.name] = 'TIMEOUT'
-            return derror
-        elif q == 3:
-            derror[device.name] = 'EOF'
-            return derror
         else:
             child.sendline('enable')
-        q = child.expect(['assword:', '>', pexpect.TIMEOUT, pexpect.EOF])
-        if q == 0:
-            child.sendline(enapassword)
-        elif q == 1:
-            child.sendline(enapassword)
-        elif q == 2:
-            derror[device.name] = 'TIMEOUT'
+        q = child.expect(generate_pexpect_list(['assword:', '>']))
+        if perror(device, derror, q):
             return derror
-        elif q == 3:
-            derror[device.name] = 'EOF'
+        if q in [1, 2]:
+            child.sendline(enapassword)
         if manufacturer.name == "Cisco":
-            q = child.expect([PROMPT_REGEX_CISCOENABLE, '>', pexpect.TIMEOUT, pexpect.EOF])
-            if q == 0:
+            q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCOENABLE, '>']))
+            if perror(device, derror, q):
+                return derror
+            if q == 2:
                 child.sendline('terminal length 0')
-            elif q == 1:
+            elif q == 3:
                 derror[device.name] = 'wrong enable password'
                 return derror
-            elif q == 2:
-                derror[device.name] = 'TIMEOUT'
-                return derror
-            elif q == 3:
-                derror[device.name] = 'EOF'
-                return derror
-            q = child.expect([PROMPT_REGEX_CISCOENABLE, pexpect.TIMEOUT, pexpect.EOF])
+            q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCOENABLE]))
             for key in ComCiscoISR:
-                if q == 0:
+                if perror(device, derror, q):
+                    return derror
+                if q == 2:
                     child.sendline(key)
-                elif q == 1:
-                    derror[device.name] = 'TIMEOUT'
-                    return derror
-                elif q == 2:
-                    derror[device.name] = 'EOF'
-                    return derror
-                q = child.expect([PROMPT_REGEX_CISCOENABLE, pexpect.TIMEOUT, pexpect.EOF])
-                with open(app.config.get('CONF_DIR') + device.name + '-' + ComCiscoISR[key] + '.txt', 'wb') as fd:
+                q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCOENABLE]))
+
+                path = get_path(device, key)
+                with open(path, 'wb') as fd:
                     fd.write(child.before)
+                PasswordManager.encrypt_file(path, pwdh)
+                conf = Configuration()
+                conf.path = path
+                conf.device = device
+                db.session.add(conf)
+                db.session.commit()
             child.sendline('exit')
             return derror
-        else:
-            print('not cisco')
     else:
         derror[device.name] = device.method + ' not supported'
+        return derror

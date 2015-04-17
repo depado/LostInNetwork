@@ -112,7 +112,7 @@ class Device(db.Model, DbMixin):
         if encrypt:
             self.password = PasswordManager.encrypt_string_from_session_pwdh(self.password)
             self.enapassword = PasswordManager.encrypt_string_from_session_pwdh(self.enapassword)
-        super(Device, self).save()
+        return super(Device, self).save()
 
     def __repr__(self):
         return self.name

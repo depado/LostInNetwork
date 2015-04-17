@@ -1,4 +1,14 @@
+{% from "button_helpers.html" import render_configuration_action_button %}
+
 {% extends "base.html" %}
 {% block content %}
     {% include 'menu.html' %}
+    {% for device in devices %}
+    <div class="well transparent white">
+        <h3>{{ device.name }}</h3>
+        {% for conf in device.configurations.all() %}
+            {{ render_configuration_action_button(conf) }}&nbsp;&nbsp;&nbsp;{{ conf.path }} <br />
+        {% endfor %}
+    </div>
+    {% endfor %}
 {% endblock %}

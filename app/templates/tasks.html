@@ -23,8 +23,8 @@
         <br/>
 
         <div id="row-button-scan" hidden>
-            <span><a id="scan-async" class="btn btn-primary">Scan</a></span>
-            <span class="pull-right">The CVE Update is executed once per day at midnight. Click the above button to update the CVE right now.</span>
+            <span><a id="scan-async" class="btn btn-primary">Fetch Configurations</a></span>
+            <span class="pull-right">Click here to fetch the configurations of your devices.</span>
         </div>
         <div id="row-progress-scan" hidden>
             <div class="progress">
@@ -94,8 +94,8 @@
 
     $("#row-button-scan").show();
     $("#scan-async").click(function() {
-        $("#row-progress-scan").show();
-        $("#row-button-scan").hide();
+        // $("#row-progress-scan").show();
+        // $("#row-button-scan").hide();
         console.log("{{ url_for('start_scan_all_devices_async') }}");
         start_long_task("{{ url_for('start_scan_all_devices_async') }}");
     });
