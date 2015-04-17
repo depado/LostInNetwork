@@ -16,6 +16,7 @@ CVE_LOCK = redis.Redis().lock("celery_cve_lock")
 
 VERSION_PATTERN='^b\'(CVE[\d-]+),.*IOS (\d+\.\d+\.?\d*).*?(through|and)? (\d+\.\d+\.?\d*)?.*$'
 
+
 def get_version(currentline):
     """
     get_version from cve
@@ -113,7 +114,7 @@ def cve_async(self):
             for f in db_fields:
                 if f not in cve_dict[cve_id].keys():
                     cve_dict[cve_id][f] = ''
-            obj=VulnCve()
+            obj = VulnCve()
             obj.cve_id=cve_id
             for entry in cve_dict[cve_id]:
                 if entry == 'url':

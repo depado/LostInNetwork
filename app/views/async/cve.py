@@ -7,9 +7,6 @@ from flask import jsonify
 from app import app
 from app.tasks.cve import cve_async, CVE_LOCK, CVE_KEY
 
-SCAN_KEY = "scan_task_uuid"
-SCAN_LOCK = redis.Redis().lock("celery_scan_lock")
-
 
 def lock_available(lock):
     free_lock = False
@@ -23,7 +20,7 @@ def lock_available(lock):
             return False
 
 
-@app.route('/async_cve_update', methods=['POST'])
+@app.route('/start/cve_update', methods=['POST'])
 def async_cve_update():
     """
     Starts the CVE update and set the lock.
@@ -32,7 +29,7 @@ def async_cve_update():
     redis.Redis().set(CVE_KEY, task.id)
     return jsonify({'key': task.id})
 
-@app.route('/async_update_cve/status', methods=['GET'])
+@app.route('/status/cve_update', methods=['GET'])
 def async_cve_update_status():
     """
     Ajax call to get the CVE Update status

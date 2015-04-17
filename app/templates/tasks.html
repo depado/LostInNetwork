@@ -23,9 +23,7 @@
         <br/>
 
         <div id="row-button-scan" hidden>
-            <span><a id="scan-async" class="btn btn-primary">
-                Update CVE
-            </a></span>
+            <span><a id="scan-async" class="btn btn-primary">Scan</a></span>
             <span class="pull-right">The CVE Update is executed once per day at midnight. Click the above button to update the CVE right now.</span>
         </div>
         <div id="row-progress-scan" hidden>
@@ -43,10 +41,11 @@
 
 {% block extra_js_at_end %}
 <script>
-    function start_long_task(nanobar, div) {
+    function start_long_task(url) {
+        console.log(url);
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('async_cve_update') }}",
+            url: url,
             success: function(data, status, request) {
                 update_progress();
             },
@@ -90,7 +89,15 @@
     $("#getcve-async").click(function() {
         $("#row-progress-cve").show();
         $("#row-button-cve").hide();
-        start_long_task();
+        start_long_task("{{ url_for('async_cve_update') }}");
+    });
+
+    $("#row-button-scan").show();
+    $("#scan-async").click(function() {
+        $("#row-progress-scan").show();
+        $("#row-button-scan").hide();
+        console.log("{{ url_for('start_scan_all_devices_async') }}");
+        start_long_task("{{ url_for('start_scan_all_devices_async') }}");
     });
 
 

@@ -2,33 +2,55 @@
 
 import celery
 import pexpect
+import redis
+
+from celery import group
 
 from app import app
 from app.models import Device
 from app.utils.prompt_regex import *
+from app.utils.crypto import PasswordManager
+
+
+SCAN_KEY = "scan_task_uuid"
+SCAN_LOCK = redis.Redis().lock("celery_scan_lock")
 
 
 @celery.task(bind=True)
-def scan_all_devices(self, device_id):
-    for device in Device.query.all():
-        scan_device_async.applly_async(args=[device])
+def scan_all_devices_async(self, pwdh):
+    have_lock = False
+    try:
+        have_lock = SCAN_LOCK.acquire(blocking=False)
+        app.logger.info(msg="Started")
+        jobs = list()
+        for device in Device.query.all():
+            jobs.append(scan_device_async.subtask((device, device.devicetype, device.devicetype.manufacturer, pwdh)))
+        job = group(jobs)
+        result = job.apply_async()
+        app.logger.info("Waiting for results")
+        result.join()
+        app.logger.info(msg="{}".format(result))
+        app.logger.info(msg="Got all results")
+    finally:
+        if have_lock:
+            SCAN_LOCK.release()
 
 
 @celery.task(bind=True)
-def scan_device_async(self, device):
+def scan_device_async(self, device, devicetype, manufacturer, pwdh):
     """
     Calls the scan_device function async way.
     """
-    scan_device(device, async=self)
+    scan_device(device, devicetype, manufacturer, pwdh, async=self)
 
 
-def scan_device(device, async=None):
-    password = device.decrypt_password()
-    enapassword = device.decrypt_enapassword()
+def scan_device(device, devicetype, manufacturer, pwdh, async=None):
+    password = PasswordManager.decrypt_string(device.password, pwdh)
+    enapassword = PasswordManager.decrypt_string(device.enapassword, pwdh)
     derror = {}
     if device.method in ['ssh', 'telnet']:
         if device.method == "ssh":
-            sTunnel = ('ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no -l ' + device.devicetype + ' ')
+            sTunnel = ('ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no -l ' + manufacturer.name + ' ')
             app.logger.info('Connecting to ' + device.username + '@' + device.ip + ' ' + device.name + ' whith ' + device.method + ' and tunnel is ' + sTunnel)
             child = pexpect.spawn(sTunnel + device.username + '@' + device.ip)
         else:
@@ -45,9 +67,7 @@ def scan_device(device, async=None):
                 derror[device.name] = 'EOF'
                 return derror
         m = child.expect([PROMPT_REGEX_CISCO, 'assword:', pexpect.TIMEOUT, pexpect.EOF])
-        if m == 0:
-            child.sendline(password)
-        elif m == 1:
+        if m in [0, 1]:
             child.sendline(password)
         elif m == 2:
             derror[device.name] = 'TIMEOUT'
@@ -81,7 +101,7 @@ def scan_device(device, async=None):
             return derror
         elif q == 3:
             derror[device.name] = 'EOF'
-        if device.devicetype.name == "Cisco":
+        if manufacturer.name == "Cisco":
             q = child.expect([PROMPT_REGEX_CISCOENABLE, '>', pexpect.TIMEOUT, pexpect.EOF])
             if q == 0:
                 child.sendline('terminal length 0')
