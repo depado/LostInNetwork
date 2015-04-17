@@ -6,6 +6,7 @@ from flask_login import login_required
 from app import app
 from app.models import Configuration, Device
 from app.utils import flash_default_password
+from app.utils.crypto import PasswordManager
 
 
 @app.route("/configurations", methods=['GET', 'POST'])
@@ -20,7 +21,13 @@ def configurations():
 @login_required
 def inspect_configuration(configuration_id):
     flash_default_password()
-    return "Configuration {}".format(configuration_id)
+    configuration = Configuration.query.filter_by(id=configuration_id).first_or_404()
+    try:
+        content = PasswordManager.decrypt_file_content_from_session_pwdh(configuration.path)
+        return render_template("inspect_configuration.html", content=content, active_page='configurations')
+    except Exception as e:
+        app.logger.exception(msg="Something went wrong : {}".format(e))
+        return redirect(url_for('configurations'))
 
 
 @app.route("/configurations/delete/<int:configuration_id>")
@@ -28,7 +35,7 @@ def inspect_configuration(configuration_id):
 def delete_configuration(configuration_id):
     configuration = Configuration.query.filter_by(id=configuration_id).first_or_404()
     if configuration.delete():
-        flash("Successfully deleted the Device.", "info")
+        flash("Successfully deleted the configuration.", "info")
     else:
         flash("Something went wrong.", "error")
     return redirect(url_for('configurations'))

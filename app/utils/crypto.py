@@ -188,3 +188,9 @@ class PasswordManager(object):
         pwdh = PasswordManager.get_session_pwdh()
         if pwdh:
             PasswordManager.decrypt_file(fname, pwdh)
+
+    @staticmethod
+    def decrypt_file_content_from_session_pwdh(fname):
+        with open(fname, 'rb') as fd:
+            content = fd.read()
+        return PasswordManager.decrypt_string_from_session_pwdh(content)

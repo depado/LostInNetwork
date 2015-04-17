@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'menu.html' %}
+    <div class="well transparent white">
+        <h4><a href="{{ url_for('configurations') }}" style="color: white;"><i class="glyphicon glyphicon-chevron-left"></i> Back</a></h4>
+        {{ content | nl2br }}
+    </div>
+{% endblock %}
