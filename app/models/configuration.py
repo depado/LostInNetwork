@@ -19,6 +19,7 @@ class Configuration(db.Model, DbMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(100), unique=True)
+#    date = db.Column(db.DateTime())
 
     risks = db.relationship('Risk', secondary=configuration_risks, backref=db.backref('configurations', lazy='dynamic'))
     device_id = db.Column(db.Integer, db.ForeignKey('device.id'))

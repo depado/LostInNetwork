@@ -9,9 +9,9 @@ def mainupdate():
     for d in Device.query.all():
         for c in d.configurations:
             c.delete()
-        run_file = "data/" + d.name + "-run.txt"
-        route_file = "data/" + d.name + "-route.txt"
-        version_file = "data/" + d.name + "-version.txt"
+        run_file = "data/config/" + d.name + "-run.txt"
+        route_file = "data/config/" + d.name + "-route.txt"
+        version_file = "data/config/" + d.name + "-version.txt"
         run_configuration = Configuration(path=run_file, device=d)
         route_configuration = Configuration(path=route_file, device=d)
         version_configuration = Configuration(path=version_file, device=d)

@@ -7,7 +7,7 @@ from app.models.vuln import VulnBasic
 
 
 def vulnbasic():
-    list_preco=open('preco.csv').readlines()
+    list_preco=open('data/source/preco.csv').readlines()
     app.logger.info('opening %s', app.config.get('list_preco'))
     for i in list_preco:
         x=i.split(';')
