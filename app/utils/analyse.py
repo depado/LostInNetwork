@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import pdb
 import re
 from app.models import Device, Configuration, ConfigurationValues, ConfVuln, VulnBasic, VulnCve 
-
+import datetime
 
 def mainanalyse():
+    jour=datetime.datetime.now()
     for conf in Configuration.query.all():
         value=""
         runpath = re.compile('.*run.txt')
@@ -18,9 +18,7 @@ def mainanalyse():
                         ConfVuln(vulnbasic_id=v.id,configuration_id=conf.id).save()
                     elif (re.match(pattern, line) and v.expectmatch==1):
                         value='%s-%s found on line %s - file %s' % (pattern, v.expectmatch, i+1, conf.path)
-                        print (value)
                 if (not value and v.expectmatch==1):
-                    print('%s-%s not found on %s' % (pattern, v.expectmatch, conf.path))
                     ConfVuln(vulnbasic_id=v.id,configuration_id=conf.id).save()
                 value=""
 
