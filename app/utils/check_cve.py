@@ -8,7 +8,7 @@ from app.models import Device, Configuration, ConfigurationValues, VulnCve, Conf
 
 
 def checkcve():
-    date = datetime.datetime.now()
+    date = datetime.date.today()
     dev_name = 'rtr1'
     for dev in Device.query.filter(Device.name == dev_name):
         for config in Configuration.query.filter(Configuration.device_id == dev.id):
