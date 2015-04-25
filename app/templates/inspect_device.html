@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% from "bootstrap_form_helper.html" import render_form, render_form_in_modal %}
+
+{% block content %}
+{% include 'menu.html' %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="well setting transparent white">
+                <legend class="clear-legend">Inspect and Edit {{ device.name }}</legend>
+                <ul>
+                    <li><b>Device</b> <a href="#" id="show_device_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                    <ul>
+                        <li><b>ID</b> : {{ device.id }}</li>
+                        <li><b>Name</b> : {{ device.name }}</li>
+                        <li><b>IP</b> : {{ device.ip }}</li>
+                        <li><b>Last Modification</b> : {{ device.date }}</li>
+                        <li><b>Username</b> : {{ device.username }}</li>
+                        <li><b>Password</b> : <span class="pwd_field"><b>Encrypted / Hidden</b></span></li>
+                        <li><b>Ena Username</b> : {{ device.enausername }}</li>
+                        <li><b>Ena Password</b> : <span class="enapwd_field"><b>Encrypted / Hidden</b></span></li>
+                        <li><b>Lan</b> <a href="#" id="show_lan_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <ul>
+                            <li><b>ID</b> : {{ device.lan.id }}</li>
+                            <li><b>Name</b> : {{ device.lan.name }}</li>
+                        </ul>
+                        <li><b>Device Type</b> <a href="#" id="show_devicetype_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                        <ul>
+                            <li><b>ID</b> : {{ device.devicetype.id }}</li>
+                            <li><b>Name</b> : {{ device.devicetype.name }}</li>
+                            <li><b>Name</b> : {{ device.devicetype.category }}</li>
+                            <li><b>Manufacturer</b> <a href="#" id="show_manufacturer_button"><i class="glyphicon glyphicon-cog"></i></a></li>
+                            <ul>
+                                <li><b>ID</b> : {{ device.devicetype.manufacturer.id }}</li>
+                                <li><b>Name</b> : {{ device.devicetype.manufacturer.name }}</li>
+                            </ul>
+                        </ul>
+                    </ul>
+                </ul>
+                <a href="#" id="display-password">Show Password</a><br />
+                <a href="#" id="display-summary">Show Summary</a>
+            </div>
+            <div class="well setting transparent white" id="summary" style="display: none;">
+                <legend class="clear-legend">Summary of the Device</legend>
+                <ul>
+                    <li><b>Name</b> : {{ device.name }}</li>
+                    <li><b>IP</b> : {{ device.ip }}</li>
+                    <li><b>Username</b> : {{ device.username }}</li>
+                    <li><b>Password</b> : <span class="pwd_field"><b>Encrypted / Hidden</b></span></li>
+                    <li><b>Ena Username</b> : {{ device.enausername }}</li>
+                    <li><b>Ena Password</b> : <span class="enapwd_field"><b>Encrypted / Hidden</b></span></li>
+                    <li><b>Lan</b> : {{ device.lan.name }}</li>
+                    <li><b>Device Type</b> : {{ device.devicetype.name }}</li>
+                    <li><b>Device Type Category</b> : {{ device.devicetype.category }}</li>
+                    <li><b>Manufacturer</b> : {{ device.devicetype.manufacturer.name }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            {{ render_form(device_form, add_mode=True, legend="Modify the Device", hidden=True, as_well=True, white=True) }}
+            {{ render_form(devicetype_form, add_mode=True, legend="Modify the Device Type", hidden=True, as_well=True, white=True) }}
+            {{ render_form(manufacturer_form, add_mode=False, legend="Modify the Manufacturer", hidden=True, as_well=True, white=True) }}
+            {{ render_form(lan_form, add_mode=False, legend="Modify the Lan", hidden=True, as_well=True, white=True) }}
+
+            {{ render_form_in_modal(new_lan_form, device_form.lan, add_mode=False) }}
+            {{ render_form_in_modal(new_devicetype_form, device_form.devicetype) }}
+            {{ render_form_in_modal(new_manufacturer_form, new_devicetype_form.manufacturer) }}
+            {{ render_form_in_modal(new_manufacturer_form, devicetype_form.manufacturer, add_mode=False) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js_at_end %}
+<script type="text/javascript">
+    $('#{{ device_form._prefix }}form-hidden').show();
+    var active = '#{{ device_form._prefix }}form-hidden';
+
+    function slide_callback(selector) {
+        if(!(active === selector)) {
+            $(active).slideToggle(200, function() {
+                $(selector).slideToggle(200);
+            });
+            active = selector;
+        }
+    }
+    $("#show_device_button").click(function () {
+        slide_callback('#{{ device_form._prefix }}form-hidden');
+    });
+    $("#show_lan_button").click(function () {
+        slide_callback('#{{ lan_form._prefix }}form-hidden');
+    });
+    $("#show_devicetype_button").click(function () {
+        slide_callback('#{{ devicetype_form._prefix }}form-hidden');
+    });
+    $("#show_manufacturer_button").click(function () {
+        slide_callback('#{{ manufacturer_form._prefix }}form-hidden');
+    });
+    $("#display-summary").click(function () {
+        $("#summary").slideToggle(200);
+        if($("#display-summary").text() === "Show Summary") {
+            $("#display-summary").text("Hide Summary");
+        } else {
+            $("#display-summary").text("Show Summary");
+        }
+        return false;
+    });
+    $("#display-password").click(function () {
+        $(".pwd_field").each(function (i, el) {
+            if(el.innerHTML === "<b>Encrypted / Hidden</b>") {
+                el.innerHTML = "{{ clear_pwd }}";
+                $("#display-password").text("Hide Password");
+            } else {
+                el.innerHTML = "<b>Encrypted / Hidden</b>";
+                $("#display-password").text("Show Password");
+            }
+        });
+        $(".enapwd_field").each(function (i, el) {
+            if(el.innerHTML === "<b>Encrypted / Hidden</b>") {
+                el.innerHTML = "{{ clear_enapwd }}";
+                $("#display-password").text("Hide Password");
+            } else {
+                el.innerHTML = "<b>Encrypted / Hidden</b>";
+                $("#display-password").text("Show Password");
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}

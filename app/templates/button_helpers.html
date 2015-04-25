@@ -1,0 +1,28 @@
+{% macro render_device_action_button(device) %}
+<div class="btn-group">
+  <a href="#" class="white dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+    <i class="glyphicon glyphicon-cog"></i>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    <li><a href="{{ url_for('inspect_device', device_id=device.id) }}"><i class="glyphicon glyphicon-search"></i> Inspect and Edit</a></li>
+    <li role="presentation" class="divider"></li>
+    <li><a href="#" id="delete-device-button-{{ device.id }}"><i class="glyphicon glyphicon-remove"></i> Delete</a></li>
+  </ul>
+</div>
+<script type="text/javascript">
+	$("#delete-device-button-{{ device.id }}").click(function () {
+		swal({
+		  title: "Are you sure?",
+		  text: "This will delete the device permanently.",
+		  type: "warning",
+		  showCancelButton: true,
+		  confirmButtonColor: "#DD6B55",
+		  confirmButtonText: "Yes",
+		  closeOnConfirm: false
+		},
+		function(){
+		  location.href="{{ url_for('delete_device', device_id=device.id) }}";
+		});
+	});
+</script>
+{% endmacro %}

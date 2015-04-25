@@ -1,0 +1,20 @@
+<nav class="navbar navbar-inverse transparent" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{ url_for('index') }}">
+            <p>LostInNetwork</p>
+          </a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="//github.com/Depado/LostInNetwork" class="white"><i class="fa fa-github fa-lg"></i></a></li>
+        </ul>
+        <ul class="nav navbar-nav pull-right">
+            <li {% if active_page == "devices" %}class="active"{% endif %}><a href="{{ url_for('devices') }}">Devices</a></li>
+            <li {% if active_page == "tasks" %}class="active"{% endif %}><a href="{{ url_for('tasks') }}">Tasks</a></li>
+            <li {% if active_page == "sysinfo" %}class="active"{% endif %}><a href="{{ url_for('sysinfo') }}">System Information</a></li>
+            <li {% if active_page == "settings" %}class="active"{% endif %}><a href="{{ url_for('settings') }}">Settings</a></li>
+            <li {% if active_page == "help" %}class="active"{% endif %}><a href="{{ url_for('help') }}">Help</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </div>
+</nav>

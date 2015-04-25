@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include 'menu.html' %}
+<div class="container-fluid">
+    <div class="col-lg-12">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-transparent">
+                <div class="panel-heading" role="tab" id="headingZero">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseZero"
+                           aria-expanded="true" aria-controls="collapseZeros">
+                            What does "LIN" stands for ?
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseZero" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingZero">
+                    <div class="panel-body">
+                        LIN is the acronym of the application's name and stands for "Lost In Network".
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-transparent">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                           aria-expanded="true" aria-controls="collapseOne">
+                            What is the main goal of LIN ?
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        The main goal of LIN is to provide an easy and user-friendly way of managing your networked
+                        devices and check for security flaws on them. LIN can also act as a backup service for your
+                        configuration files, although it is not the main goal of the application.
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-transparent">
+                <div class="panel-heading" role="tab" id="headingTwo">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"
+                           aria-expanded="false" aria-controls="collapseTwo">
+                            What can LIN actually do ?
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                    <div class="panel-body">
+                        With LIN you can save your networked devices to a database. This allows an <b>easier management
+                        </b>of what equipment is present on the network. All passwords are stored in the database and
+                        encrypted with an AES cipher, and are only accessible to a logged-in user. You can use LIN to
+                        store and remember the passwords for your devices. Each device can be linked to a lan and can
+                        have several other information.<br /><br />
+                        One of the main features of LIN is that it can automatically connect to your devices and fetch
+                        your configuration files for backup and analysis purpose. It also checks for CVE flaws on your
+                        devices kernel version and warns you when a security issue is detected.<br /><br />
+                        Here is a non-exhaustive list of LIN's capabilities :
+                        <ul>
+                            <li>Store a list of devices</li>
+                            <li>Store the passwords in a secure way for each device</li>
+                            <li>Perform CVE detection on devices</li>
+                            <li>Update the CVE database from the user interface</li>
+                            <li>Backup your configuration files in a secure way</li>
+                            <li>Provide a way to download your configuration files (encrypted and not encrypted)</li>
+                            <li>Allow to check for system information online</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-transparent">
+                <div class="panel-heading" role="tab" id="headingThree">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree"
+                           aria-expanded="false" aria-controls="collapseThree">
+                            Why are there multiple steps to add a device ?
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                    <div class="panel-body">
+                        The separated steps, such as creating the device type or the lan, allows us to provide a
+                        reusability of the information stored in the database. This way the database doesn't contain any
+                        redundancy and thus optimizes the database usage.
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-transparent">
+                <div class="panel-heading" role="tab" id="headingFour">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour"
+                           aria-expanded="false" aria-controls="collapseFour">
+                            Are the data stored in the database safe ?
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+                    <div class="panel-body">
+                        All sensible information stored in the database such as passwords is encrypted in a way that
+                        no external user can read them. They are ecrypted using an AES cipher using the main user's
+                        password SHA512. Once the user log in, this hash is stored in the session which is itself
+                        encrypted by the Flask micro-framework. This way only a logged-in user can access sensible data
+                        and LIN doesn't store the password itself, not even the hash. Session is the main key in the
+                        security process on LIN.<br /><br />
+                        The configuration files stored on the server are also encrypted this way. This can explain why
+                        changing your password can take some time when the database contains a lot of devices, the
+                        key to the AES cipher changes so LIN has to decrypt all the devices  and files using the old
+                        password before encrypting them again with the new one.
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-transparent">
+                <div class="panel-heading" role="tab" id="headingFive">
+                    <h4 class="panel-title">
+                        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFive"
+                           aria-expanded="false" aria-controls="collapseFive">
+                            What technologies are behind LIN ?
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+                    <div class="panel-body">
+                        LIN has been developped using the Flask micro-framework. So the language behind LIN is Python.
+                        The current and recommended version is Python 3.4. <br />
+                        Many plugins are used to make the developpment of LIN easier.<br /><br />
+                        <div class="container-fluid">
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask</u></p></div>
+                                <div class="col-md-10"><p>The core micro-framework of LIN</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-Login</u></p></div>
+                                <div class="col-md-10"><p>A plugin to Flask to allow more control over the user management.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-Migrate</u></p></div>
+                                <div class="col-md-10"><p>Currently unused. Allows database migration using Alembic.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-Script</u></p></div>
+                                <div class="col-md-10"><p>Allows more control over the application command line interface.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-SQLAlchemy</u></p></div>
+                                <div class="col-md-10"><p>SQLAlchemy Flask plugin. Used as the ORM of LIN.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Flask-WTF</u></p></div>
+                                <div class="col-md-10"><p>WhatTheForm Flask plugin. Integrating WTForms with a Flask app.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>pycrypto</u></p></div>
+                                <div class="col-md-10"><p>Cryptographic module that provides all the desired security features
+                                used by LIN.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>Jinja2</u></p></div>
+                                <div class="col-md-10"><p>The templating language used by LIN. (default with Flask)</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>pexpect</u></p></div>
+                                <div class="col-md-10"><p>Allows to fake user inputs. This is used to send commands to devices.</p></div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="col-md-2"><p class="pull-right"><u>psycopg2</u></p></div>
+                                <div class="col-md-10"><p>PostgreSQL database suport.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

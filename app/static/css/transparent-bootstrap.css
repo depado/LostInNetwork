@@ -1,0 +1,164 @@
+.login {
+    margin-top: 50px; 
+    padding: 30px; 
+    padding-bottom: 0px; 
+}
+
+.modal-form {
+  padding: 30px;
+}
+
+.setting {
+    padding: 30px; 
+}
+
+.transparent {
+    background: rgba(0,0,0,0.1); 
+    border:none;
+}
+
+.panel-transparent {
+    background: rgba(0,0,0,0.1);
+    color: rgba(255, 255, 255, 1);
+    border:none;
+}
+
+.dark {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(51, 51, 51, 0.5);
+}
+
+.clear-legend {
+    color: rgba(255, 255, 255, 1); 
+    border-style:none;
+}
+
+.clear-text {
+    color: #9D9D9D;
+    text-align: center;
+}
+
+.clear {
+    color: #9D9D9D;
+}
+
+.white {
+    color: rgba(255,255,255,1);
+}
+
+.form-inline .form-horizontal .control-group > label {
+  text-align: left;
+}
+.form-horizontal .form-inline .control-group > label {
+  float: none;
+  padding-top: 0;
+  text-align: left;
+  width: 100%;
+}
+.form-horizontal .form-inline .controls {
+  margin-left: 0;
+}
+.form-horizontal .form-inline.form-actions,
+.form-horizontal .form-inline .form-actions {
+  padding-left: 20px;
+}
+.control-group .control-group {
+  margin-bottom: 0;
+}
+
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+  background-color: rgba(8, 8, 8, 0.1);
+}
+
+.tree {
+    min-height:20px;
+    padding:19px;
+    margin-bottom:20px;
+    background-color:#fbfbfb;
+    border:1px solid #999;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
+}
+.tree li {
+    list-style-type:none;
+    margin:0;
+    padding:10px 5px 0 5px;
+    position:relative
+}
+.tree li::before, .tree li::after {
+    content:'';
+    left:-20px;
+    position:absolute;
+    right:auto
+}
+.tree li::before {
+    border-left:1px solid #999;
+    bottom:50px;
+    height:100%;
+    top:0;
+    width:1px
+}
+.tree li::after {
+    border-top:1px solid #999;
+    height:20px;
+    top:25px;
+    width:25px
+}
+.tree li span {
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    border:1px solid #999;
+    border-radius:5px;
+    display:inline-block;
+    padding:3px 8px;
+    text-decoration:none
+}
+.tree li.parent_li>span {
+    cursor:pointer
+}
+.tree>ul>li::before, .tree>ul>li::after {
+    border:0
+}
+.tree li:last-child::before {
+    height:30px
+}
+.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
+    background:#eee;
+    border:1px solid #94a0b4;
+    color:#000
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 35px;
+  padding: 5px;
+  color: #9D9D9D;
+  background: rgba(0,0,0,0.1);
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+a:active {
+    outline: 0;
+    text-decoration: none;
+}
+
+a:focus {
+    outline: 0;
+    text-decoration: none;
+}
+

@@ -15,9 +15,11 @@ class User(db.Model):
     A simple user model with permission handling and password hash.
     Implements two methods to set the password and check the password.
     """
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(54))
+    password = db.Column(db.String(66))
     permission = db.Column(db.String(1))
     superuser = db.Column(db.Boolean())
     active = db.Column(db.Boolean())
@@ -37,7 +39,12 @@ class User(db.Model):
 
     def save(self):
         db.session.add(self)
-        db.session.commit()
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return False
+        return True
 
     def is_authenticated(self):
         return True

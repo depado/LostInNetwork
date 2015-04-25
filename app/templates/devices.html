@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% from "bootstrap_form_helper.html" import render_form, render_form_in_modal %}
+{% from "button_helpers.html" import render_device_action_button %}
+
+{% block content %}
+{% include 'menu.html' %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            {% for device in devices %}
+            <div class="well white transparent" style="padding-top: 5px; padding-bottom: 5px;">
+            <span class="pull-right">{{ render_device_action_button(device) }}</span>
+                <p style="text-align: center"><b>{{device.name}}</b></p>
+                <div class="container-fluid" style="margin: 0px; padding: 0px;">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>IP</p>
+                            <p>Device Type</p>
+                            <p>Lan</p>
+                        </div>
+                        <div class="col-md-9">
+                            <p>{{ device.ip }}</p>
+                            <p>{{ device.devicetype.name }}</p>
+                            <p>{{ device.lan.name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-md-6">
+            <div class="well setting transparent">
+                {{ render_form(device_form, white=True, legend="Add a new Device") }}
+            </div>
+        </div>
+
+        {{ render_form_in_modal(devicetype_form, device_form.devicetype) }}
+        {{ render_form_in_modal(lan_form, device_form.lan) }}
+        {{ render_form_in_modal(manufacturer_form, devicetype_form.manufacturer) }}
+    </div>
+</div>
+{% endblock %}

@@ -10,8 +10,8 @@ from app.models import User
 
 
 class LoginForm(Form):
-    username = StringField('login', validators=[DataRequired()])
-    password = PasswordField('password', validators=[DataRequired()])
+    username = StringField('login', validators=[DataRequired()], description={'placeholder': "Username"})
+    password = PasswordField('password', validators=[DataRequired()], description={'placeholder': "Password"})
     submit = SubmitField('submit')
 
     def validate_username(self, field):
