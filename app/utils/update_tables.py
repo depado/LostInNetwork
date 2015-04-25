@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-
 from app.models import Device, Configuration, ConfigurationValues, DeviceInterfaces, DeviceRoutes
 
 

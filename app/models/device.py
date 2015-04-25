@@ -157,8 +157,9 @@ class Device(db.Model):
     password = db.Column(db.String(66))
     enausername = db.Column(db.String(50))
     enapassword = db.Column(db.String(66))
-    method = db.Column(db.Enum('ssh', 'telnet', name='connect_method'),
+    method = db.Column(db.Enum('ssh', 'telnet', 'scp', name='connect_method'),
                        default='ssh')
+    status = db.Column(db.Integer)
     lan_id = db.Column(db.Integer, db.ForeignKey('lan.id'))
     configurations = db.relationship('Configuration', backref='device', lazy='dynamic')
     devicetype_id = db.Column(db.Integer, db.ForeignKey('device_type.id'))
