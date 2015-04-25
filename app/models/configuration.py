@@ -66,6 +66,6 @@ class ConfigurationValues(db.Model, DbMixin):
     vulnperm = db.relationship('VulnPerm', secondary=configurationvalues_vulnperm, backref=db.backref('configurations', lazy='dynamic'))
 
     def __repr__(self):
-        return self.name
+        return self.id
 
 

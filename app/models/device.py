@@ -40,7 +40,7 @@ class DeviceRoutes(db.Model, DbMixin):
     net_dst = db.Column(db.String())
     net_mask = db.Column(db.String())
     gw = db.Column(db.String())
-    connected = db.Column(db.Enum('0', '1'))
+    connected = db.Column(db.Enum('0', '1', name='connected'))
     configuration_id = db.Column(db.Integer(), db.ForeignKey(
         'configuration.id'))
 

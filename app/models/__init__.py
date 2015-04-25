@@ -12,4 +12,4 @@ from .configuration import Configuration, ConfigurationValues
 from .configuration import configuration_risks, configurationvalues_vulnbasic, configurationvalues_vulnperm, configurationvalues_vulncve
 from .device import device_risks
 
-from .vuln import VulnBasic, VulnCve, VulnPerm
+from .vuln import VulnBasic, VulnCve, VulnPerm, ConfVuln
