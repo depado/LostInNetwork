@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import re
+import time
+import datetime
 from app import db
 from app.models import Device, Configuration, ConfigurationValues, VulnCve, ConfVuln
 
 
 def checkcve():
+    date = datetime.datetime.now()
     dev_name = 'rtr1'
     for dev in Device.query.filter(Device.name == dev_name):
         for config in Configuration.query.filter(Configuration.device_id == dev.id):
@@ -59,5 +62,6 @@ def checkcve():
                                     obj.configuration_id = config.id
                                     obj.vulncve_id = cve.id
                             if obj.vulncve_id:
+                                obj.date=date
                                 db.session.add(obj)
     db.session.commit()
