@@ -18,9 +18,9 @@ def mainanalyse():
                         ConfVuln(vulnbasic_id=v.id,configuration_id=conf.id).save()
                     elif (re.match(pattern, line) and v.expectmatch==1):
                         value='%s-%s found on line %s - file %s' % (pattern, v.expectmatch, i+1, conf.path)
-                        print (value)
+                     #   print (value)
                 if (not value and v.expectmatch==1):
-                    print('%s-%s not found on %s' % (pattern, v.expectmatch, conf.path))
+                    #print('%s-%s not found on %s' % (pattern, v.expectmatch, conf.path))
                     ConfVuln(vulnbasic_id=v.id,configuration_id=conf.id).save()
                 value=""
 
