@@ -53,4 +53,15 @@ def mainupdate():
         for conf in Configuration.query.filter(Configuration.path.like('%route.txt')).filter(Configuration.device_id==d.id).order_by(Configuration.date.desc()).limit(1):
             routeCisco( conf.path, conf.id)
 
+        for conf in Configuration.query.filter(Configuration.path.like('%run.txt')).filter(Configuration.device_id==d.id).order_by(Configuration.date.desc()).limit(1):
+            int_regex = re.compile('(?i)interface\s(.*)\n ip address (.*) (.*)\n.*\n (?!shutdown)', re.MULTILINE)
+            with open(conf.path) as f:
+                for match in int_regex.finditer(f.read()):
+                    run_values=DeviceInterfaces()
+                    run_values.name = match.group(1)
+                    run_values.addr = match.group(2)
+                    run_values.netmask = match.group(3)
+                    run_values.configuration_id = conf.id
+                    db.session.add(run_values)
+
     db.session.commit()
