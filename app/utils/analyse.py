@@ -2,24 +2,32 @@
 import re
 from app.models import Device, Configuration, ConfigurationValues, ConfVuln, VulnBasic, VulnCve 
 import datetime
+from app import db
 
 def mainanalyse():
-    jour=datetime.datetime.now()
-    for conf in Configuration.query.all():
-        value=""
-        runpath = re.compile('.*run.txt')
-        crun = runpath.match(conf.path)
-        for v in VulnBasic.query.all():
-            pattern=re.compile(v.match)
-            if crun:
+    today=datetime.datetime.now()
+    for d in Device.query.all():
+        for conf in Configuration.query.filter(Configuration.path.like('%run.txt')).filter(Configuration.device_id==d.id).order_by(Configuration.date.desc()).limit(1):
+            value=""
+            for v in VulnBasic.query.all():
+                pattern=re.compile(v.match)
                 for i, line in enumerate(open(conf.path)):
                     if (re.match(pattern, line) and v.expectmatch==0):
                         value='ERROR : %s-%s found on line %s - file %s' % (pattern, v.expectmatch, i+1, conf.path)
-                        ConfVuln(vulnbasic_id=v.id,configuration_id=conf.id).save()
+                        vuln_values=ConfVuln()
+                        vuln_values.vulnbasic_id = v.id
+                        vuln_values.configuration_id = conf.id
+                        vuln_values.date = today
                     elif (re.match(pattern, line) and v.expectmatch==1):
                         value='%s-%s found on line %s - file %s' % (pattern, v.expectmatch, i+1, conf.path)
                 if (not value and v.expectmatch==1):
-                    ConfVuln(vulnbasic_id=v.id,configuration_id=conf.id).save()
-                value=""
+                    vuln_values=ConfVuln()
+                    vuln_values.vulnbasic_id = v.id
+                    vuln_values.configuration_id = conf.id
+                    vuln_values.date = today
+                    value=""
+                db.session.add(vuln_values)
+    
+        db.session.commit()
 
 
