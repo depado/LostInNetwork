@@ -3,7 +3,7 @@
 import re
 
 from app.models import Device, Configuration, ConfigurationValues, DeviceInterfaces, DeviceRoutes
-
+from app.models import routeCisco
 
 def mainupdate():
     for d in Device.query.all():
@@ -51,15 +51,16 @@ def mainupdate():
                     mask_run = match.group(3)
                     DeviceInterfaces(name=interface_run, addr=ip_run, netmask=mask_run, configuration_id=conf.id).save()
         if croute:
-            routeregex = re.compile('\w\**\s*(\d+.\d+.\d+.\d+)/*(\d+)*.*(connected|via),*\s+(.*)', re.MULTILINE)
-            with open(conf.path) as runfile:
-                for match in routeregex.finditer(runfile.read()):
-                    net_route = match.group(1)
-                    mask_route = match.group(2)
-                    gw_route = match.group(4)
-                    if match.group(3)=="connected":
-                        conn_route = 1
-                    else:
-                        conn_route = 0
-                    DeviceRoutes(net_dst=net_route, net_mask=mask_route, gw=gw_route, connected=conn_route, configuration_id=conf.id).save()
+            routeCisco(croute, conf.id)
+#            routeregex = re.compile('\w\**\s*(\d+.\d+.\d+.\d+)/*(\d+)*.*(connected|via),*\s+(.*)', re.MULTILINE)
+#            with open(conf.path) as runfile:
+#                for match in routeregex.finditer(runfile.read()):
+#                    net_route = match.group(1)
+#                    mask_route = match.group(2)
+#                    gw_route = match.group(4)
+#                    if match.group(3)=="connected":
+#                        conn_route = 1
+#                    else:
+#                        conn_route = 0
+#                    DeviceRoutes(net_dst=net_route, net_mask=mask_route, gw=gw_route, connected=conn_route, configuration_id=conf.id).save()
 
