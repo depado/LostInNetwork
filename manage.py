@@ -21,7 +21,8 @@ def create_db():
     m.save()
     d = DeviceType(manufacturer=m, category="Router", name="Cisco Router")
     d.save()
-
+    l = Lan(name='test')
+    l.save()
 
 if __name__ == '__main__':
     manager.run()

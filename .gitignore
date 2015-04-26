@@ -63,3 +63,4 @@ log/
 bkpdb/
 dump.rdb
 celerybeat-schedule
+*.swp
