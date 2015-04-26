@@ -4,7 +4,8 @@ import re
 import time
 import datetime
 from app import db
-from app.models import Device, Configuration, ConfigurationValues, DeviceInterfaces, DeviceRoutes
+from app.models import Device, Configuration, ConfigurationValues, DeviceInterfaces, DeviceRoutesi
+from app.utils import routeCisco
 from sqlalchemy import desc
 
 def mainupdate():
@@ -48,5 +49,8 @@ def mainupdate():
                     version_values.model=cisco_search.group(1)
                     version_values.configuration_id=conf.id
                     db.session.add(version_values)
+
+        for conf in Configuration.query.filter(Configuration.path.like('%route.txt')).filter(Configuration.device_id==d.id).order_by(Configuration.date.desc()).limit(1):
+            routeCisco( conf.path, conf.id)
 
     db.session.commit()
