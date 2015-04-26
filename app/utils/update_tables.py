@@ -1,65 +1,52 @@
 # -*- coding: utf-8 -*-
 
 import re
-
+import time
+import datetime
+from app import db
 from app.models import Device, Configuration, ConfigurationValues, DeviceInterfaces, DeviceRoutes
-
+from sqlalchemy import desc
 
 def mainupdate():
-    for d in Device.query.all():
-        for c in d.configurations:
-            c.delete()
-        run_file = "data/config/" + d.name + "-run.txt"
-        route_file = "data/config/" + d.name + "-route.txt"
-        version_file = "data/config/" + d.name + "-version.txt"
-        run_configuration = Configuration(path=run_file, device=d)
-        route_configuration = Configuration(path=route_file, device=d)
-        version_configuration = Configuration(path=version_file, device=d)
-        run_configuration.save()
-        route_configuration.save()
-        version_configuration.save()
-    runpath = re.compile('.*run.txt')
-    routepath = re.compile('.*route.txt')
-    versionpath = re.compile('.*version.txt')
-
-    # Ouais ok je delete tout, mais on n'a pas vraiment le choix et je vous emmerde
+    today = datetime.date.today()
+    for c in Configuration.query.all():
+        c.delete()
     for c in ConfigurationValues.query.all():
         c.delete()
     for c in DeviceInterfaces.query.all():
         c.delete()
     for c in DeviceRoutes.query.all():
         c.delete()
+    for d in Device.query.all():
+        run_file = "data/devices/" + d.name + "-run.txt"
+        route_file = "data/devices/" + d.name + "-route.txt"
+        version_file = "data/devices/" + d.name + "-version.txt"
+        run_configuration=Configuration()
+        run_configuration.path=run_file
+        run_configuration.device=d
+        run_configuration.date=today
+        route_configuration=Configuration()
+        route_configuration.path=route_file
+        route_configuration.device=d
+        route_configuration.date=today
+        version_configuration=Configuration()
+        version_configuration.path=version_file
+        version_configuration.device=d
+        version_configuration.date=today
 
-    for conf in Configuration.query.all():
-        cversion = versionpath.match(conf.path)
-        crun = runpath.match(conf.path)
-        croute = routepath.match(conf.path)
-        if cversion:
+    runpath = re.compile('.*run.txt')
+    routepath = re.compile('.*route.txt')
+    versionpath = re.compile('.*version.txt')
+    for d in Device.query.all():
+        for conf in Configuration.query.filter(Configuration.path.like('%version.txt')).filter(Configuration.device_id==d.id).order_by(Configuration.date.desc()).limit(1):
             for lines in open(conf.path):
                 lines = lines.strip()
                 cisco_search = re.search('(?i)Cisco\sIOS.*,.*\((\w+\d*)-.*\).*Version\s(\d*.\d*)\(.*', lines)
                 if cisco_search:
-                    model_version = cisco_search.group(1)
-                    version_version = cisco_search.group(2)
-                    ConfigurationValues(version=version_version, model=model_version, configuration=conf).save()
-        if crun:
-            int_regex = re.compile('(?i)interface\s(.*)\n ip address (.*) (.*)\n.*\n (?!shutdown)', re.MULTILINE)
-            with open(conf.path) as runfile:
-                for match in int_regex.finditer(runfile.read()):
-                    interface_run = match.group(1)
-                    ip_run = match.group(2)
-                    mask_run = match.group(3)
-                    DeviceInterfaces(name=interface_run, addr=ip_run, netmask=mask_run, configuration_id=conf.id).save()
-        if croute:
-            routeregex = re.compile('\w\**\s*(\d+.\d+.\d+.\d+)/*(\d+)*.*(connected|via),*\s+(.*)', re.MULTILINE)
-            with open(conf.path) as runfile:
-                for match in routeregex.finditer(runfile.read()):
-                    net_route = match.group(1)
-                    mask_route = match.group(2)
-                    gw_route = match.group(4)
-                    if match.group(3)=="connected":
-                        conn_route = 1
-                    else:
-                        conn_route = 0
-                    DeviceRoutes(net_dst=net_route, net_mask=mask_route, gw=gw_route, connected=conn_route, configuration_id=conf.id).save()
+                    version_values=ConfigurationValues()
+                    version_values.version=cisco_search.group(2)
+                    version_values.model=cisco_search.group(1)
+                    version_values.configuration_id=conf.id
+                    db.session.add(version_values)
 
+    db.session.commit()
