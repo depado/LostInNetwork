@@ -1,0 +1,14 @@
+Psendcommand - marche pas
+config dir data/device
+table configuration ajouter champ date
+date des fichiers conf
+ex: rtr1-run-20150426.txt
+repertoire par devices data/device/<devicename>
+validation cle ssh
+affichage des resultat
+route
+vulnbasic ( add date )
+powerpoint
+rapport
+schema db
+
