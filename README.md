@@ -32,6 +32,7 @@ Ensure that there is already a database folder in the project root. (LostInNetwo
 To create the database with the root/root user, do as follow :
 
     python manage.py create_db
+    python manage.py create_superuser
 
 You can then run your test server as follow :
 

@@ -14,7 +14,19 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_db():
     db.create_all()
-    from app.models import User, Manufacturer, DeviceType
+
+@manager.command
+def create_superuser():
+    """
+    TODO: Take some inputs to define username and password for the superuser instead of forcing root/root
+    """
+    from app.models import User
+    user = User(username='root', password='root', active=True, superuser=True)
+    user.save()
+
+@manager.command
+def create_test_data():
+    from app.models import User, Manufacturer, DeviceType, Lan
     user = User(username='root', password='root', active=True, superuser=True)
     user.save()
     m = Manufacturer(name="Cisco")
