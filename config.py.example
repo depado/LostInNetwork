@@ -1,0 +1,28 @@
+# -*- coding: utf-8-*-
+
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'database/database.db')
+SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
+CSRF_ENABLED = True
+
+# Logging
+LOG_FILE = 'log/lostinnetwork.log'
+
+# CVE Related constants
+CVE_GZ = 'data/cve.csv.gz'
+CVE_URL = 'http://cve.mitre.org/data/downloads/allitems.csv.gz'
+
+# Celery configuration
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ['json', 'msgpack', 'yaml']
+
+# MODIFY THIS !
+SECRET_KEY = 'a8b60a32a41e4c2d323676e5e82ea982d7d4a97ffe025e0d1cc10b2b07a664c1'
+PWD_SALT = 'rNoVslpD6cqYTrAUD6TkeKjjl* zG16VaGbtcqkpE70^fw_*~x8k5xrOw-f|'
+DEBUG = True
+
+# Modify to match your domain name
+# SERVER_NAME = "flask.dev:5000"

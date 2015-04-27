@@ -18,7 +18,8 @@ class Configuration(db.Model, DbMixin):
     friendly_name = "Configuration"
 
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(100), unique=True)
+    path = db.Column(db.String(100))
+    date = db.Column(db.DateTime())
 
     risks = db.relationship('Risk', secondary=configuration_risks, backref=db.backref('configurations', lazy='dynamic'))
     device_id = db.Column(db.Integer, db.ForeignKey('device.id'))
@@ -66,6 +67,6 @@ class ConfigurationValues(db.Model, DbMixin):
     vulnperm = db.relationship('VulnPerm', secondary=configurationvalues_vulnperm, backref=db.backref('configurations', lazy='dynamic'))
 
     def __repr__(self):
-        return self.name
+        return self.id
 
 
