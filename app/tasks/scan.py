@@ -4,6 +4,7 @@ import celery
 import pexpect
 import redis
 import os
+import time
 
 from celery import group
 from datetime import datetime
@@ -56,7 +57,10 @@ def scan_all_devices_async(self, pwdh):
         for device in Device.query.all():
             jobs.append(scan_device_async.subtask((device, device.devicetype, device.devicetype.manufacturer, pwdh)))
         result = group(jobs).apply_async()
-        result.join()
+        while not result.ready():
+            time.sleep(1)
+            # TODO: Update status here
+        app.logger.info(msg="Finished")
     finally:
         if have_lock:
             SCAN_LOCK.release()
@@ -123,7 +127,6 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
                 if q == 2:
                     child.sendline(key)
                 q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCOENABLE]))
-
                 path = get_path(device, key)
                 with open(path, 'wb') as fd:
                     fd.write(child.before)
@@ -131,6 +134,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
                 conf = Configuration()
                 conf.path = path
                 conf.device = device
+                conf.date = datetime.now()
                 db.session.add(conf)
                 db.session.commit()
             child.sendline('exit')
