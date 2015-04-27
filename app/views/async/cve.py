@@ -3,24 +3,15 @@
 import redis
 
 from flask import jsonify
+from flask_login import login_required
 
 from app import app
 from app.tasks.cve import cve_async, CVE_LOCK, CVE_KEY
-
-
-def lock_available(lock):
-    free_lock = False
-    try:
-        free_lock = lock.acquire(blocking=False)
-    finally:
-        if free_lock:
-            lock.release()
-            return True
-        else:
-            return False
+from .lock import lock_available
 
 
 @app.route('/start/cve_update', methods=['POST'])
+@login_required
 def async_cve_update():
     """
     Starts the CVE update and set the lock.
@@ -29,7 +20,9 @@ def async_cve_update():
     redis.Redis().set(CVE_KEY, task.id)
     return jsonify({'key': task.id})
 
+
 @app.route('/status/cve_update', methods=['GET'])
+@login_required
 def async_cve_update_status():
     """
     Ajax call to get the CVE Update status

@@ -92,14 +92,12 @@ class Device(db.Model, DbMixin):
     password = db.Column(db.String(66))
     enausername = db.Column(db.String(50))
     enapassword = db.Column(db.String(66))
-    method = db.Column(db.Enum('ssh', 'telnet', name='connect_method'),
-                       default='ssh')
+    method = db.Column(db.Enum('ssh', 'telnet', name='connect_method'), default='ssh')
     lan_id = db.Column(db.Integer, db.ForeignKey('lan.id'))
     configurations = db.relationship('Configuration', backref='device', lazy='dynamic')
     devicetype_id = db.Column(db.Integer, db.ForeignKey('device_type.id'))
 
-    risks = db.relationship('Risk', secondary=device_risks,
-                            backref=db.backref('pages', lazy='dynamic'))
+    risks = db.relationship('Risk', secondary=device_risks, backref=db.backref('pages', lazy='dynamic'))
 
     def decrypt_password(self):
         return PasswordManager.decrypt_string_from_session_pwdh(self.password)

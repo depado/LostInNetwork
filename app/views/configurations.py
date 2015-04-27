@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from flask import render_template, flash, redirect, url_for
+import os
+
+from flask import render_template, flash, redirect, url_for, make_response
 from flask_login import login_required
 
 from app import app
@@ -39,3 +41,19 @@ def delete_configuration(configuration_id):
     else:
         flash("Something went wrong.", "error")
     return redirect(url_for('configurations'))
+
+
+@app.route("/configurations/download/<int:configuration_id>")
+@login_required
+def download_configuration(configuration_id):
+    configuration = Configuration.query.filter_by(id=configuration_id).first_or_404()
+    try:
+        content = PasswordManager.decrypt_file_content_from_session_pwdh(configuration.path)
+        directory, filename = os.path.split(configuration.path)
+        response = make_response(content)
+        response.headers["Content-Disposition"] = "attachment; filename={}".format(filename)
+        return response
+    except Exception as e:
+        app.logger.exception(msg="Something went wrong while downloading configuration : {}".format(e))
+        flash("Something went wrong. Check the log file for more information.", "error")
+        return redirect(url_for('configurations'))

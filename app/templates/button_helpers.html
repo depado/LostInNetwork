@@ -31,6 +31,7 @@
 <span class="white">
     <a href="{{ url_for('inspect_configuration', configuration_id=configuration.id) }}" style="color: white;"><i class="glyphicon glyphicon-search"></i></a>
     <a href="#" id="delete-configuration-button-{{ configuration.id }}" style="color: white;"><i class="glyphicon glyphicon-remove"></i></a>
+    <a href="{{ url_for('download_configuration', configuration_id=configuration.id) }}" style="color: white;"><i class="glyphicon glyphicon-download"></i></a>
 </span>
 <script type="text/javascript">
 	$("#delete-configuration-button-{{ configuration.id }}").click(function () {
