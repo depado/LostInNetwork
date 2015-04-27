@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import re
 from app import app
-from app import db
 from app.models.vuln import VulnBasic
 
 
