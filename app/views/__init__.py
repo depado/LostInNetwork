@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .main import index, login, logout
-from .devices import devices
+from .devices import devices, configurations_device, delete_device, inspect_device
 from .tasks import tasks
 from .settings import settings
 from .ajax import ajax_system

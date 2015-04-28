@@ -5,6 +5,7 @@
   </a>
   <ul class="dropdown-menu dropdown-menu-right" role="menu">
     <li><a href="{{ url_for('inspect_device', device_id=device.id) }}"><i class="glyphicon glyphicon-search"></i> Inspect and Edit</a></li>
+    <li><a href="{{ url_for('configurations_device', device_id=device.id) }}"><i class="glyphicon glyphicon-search"></i> Configurations</a></li>
     <li role="presentation" class="divider"></li>
     <li><a href="#" id="delete-device-button-{{ device.id }}"><i class="glyphicon glyphicon-remove"></i> Delete</a></li>
   </ul>

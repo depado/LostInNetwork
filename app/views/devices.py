@@ -95,3 +95,10 @@ def inspect_device(device_id):
 
     return render_template("inspect_device.html", device=device, active_page="devices",
                            clear_pwd=device.decrypt_password(), clear_enapwd=device.decrypt_enapassword(), **form_dict)
+
+
+@app.route("/devices/configurations/<int:device_id>", methods=['GET', 'POST'])
+def configurations_device(device_id):
+    flash_default_password()
+    device = [Device.query.filter_by(id=device_id).first_or_404(),]
+    return render_template("configurations.html", active_page="devices", devices=device)

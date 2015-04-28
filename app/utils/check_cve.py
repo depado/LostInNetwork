@@ -5,6 +5,7 @@ import datetime
 from app import db, app
 from app.models import Device, Configuration, ConfigurationValues, VulnCve, ConfVuln
 
+
 def checkcve_all():
     for device in Device.query.all():
         checkcve(device)

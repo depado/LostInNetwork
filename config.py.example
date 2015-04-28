@@ -9,6 +9,7 @@ CSRF_ENABLED = True
 
 # Logging
 LOG_FILE = 'log/lostinnetwork.log'
+CONF_DIR = 'data/'
 
 # CVE Related constants
 CVE_GZ = 'data/cve.csv.gz'

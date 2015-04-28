@@ -118,6 +118,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
             async.update_state(state='PROGRESS', meta={'message': "Sending Password", 'percentage': 10})
         q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO, 'assword:']))
         if perror(device, derror, q):
+            print(derror)
             return derror
         if q in [2, 3]:
             child.sendline(password)
@@ -125,6 +126,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
             child.sendline(password)
         q = child.expect(generate_pexpect_list(['>', '[Pp]assword:']))
         if perror(device, derror, q):
+            print(derror)
             return derror
         if q == 2:
             child.sendline('enable')
@@ -134,6 +136,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
             child.sendline('enable')
         q = child.expect(generate_pexpect_list(['assword:', '>']))
         if perror(device, derror, q):
+            print(derror)
             return derror
         if q in [1, 2]:
             child.sendline(enapassword)
@@ -164,7 +167,9 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
                 db.session.add(conf)
                 db.session.commit()
             child.sendline('exit')
+            print(derror)
             return derror
     else:
         derror[device.name] = device.method + ' not supported'
+        print(derror)
         return derror
