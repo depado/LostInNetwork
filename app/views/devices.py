@@ -8,6 +8,8 @@ from app.forms import DeviceForm, DeviceTypeForm, LanForm, ManufacturerForm
 from app.models import Device, DeviceType, Lan, Manufacturer
 from app.utils import flash_default_password
 
+from .configurations import generate_conf_dict
+
 
 @app.route('/devices', methods=['GET', 'POST'])
 @login_required
@@ -100,5 +102,5 @@ def inspect_device(device_id):
 @app.route("/devices/configurations/<int:device_id>", methods=['GET', 'POST'])
 def configurations_device(device_id):
     flash_default_password()
-    device = [Device.query.filter_by(id=device_id).first_or_404(),]
-    return render_template("configurations.html", active_page="devices", devices=device)
+    device = Device.query.filter_by(id=device_id).first_or_404()
+    return render_template("configurations.html", active_page="devices", configuration_dict=generate_conf_dict(device))
