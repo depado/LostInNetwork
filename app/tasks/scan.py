@@ -52,17 +52,33 @@ def scan_all_devices_async(self, pwdh):
     have_lock = False
     try:
         have_lock = SCAN_LOCK.acquire(blocking=False)
-        app.logger.info(msg="Started")
+        app.logger.info(msg="Started File Fetching")
         jobs = list()
         for device in Device.query.all():
             jobs.append(scan_device_async.subtask((device, device.devicetype, device.devicetype.manufacturer, pwdh)))
+        total = len(jobs)
         result = group(jobs).apply_async()
+        self.update_state(state='PROGRESS', meta={'message': "Started Fetching for {total} device{plural_total}".format(
+            total=total,
+            plural_total="s" if total > 1 else ""
+        ), 'percentage': 0})
         while not result.ready():
             time.sleep(1)
+            done = 0
             for res in result.results:
-                print(res)
-                print(res.status)
-        app.logger.info(msg="Finished")
+                # res.info for data of the subtask, res.status for status
+                if res.status == 'SUCCESS':
+                    done += 1
+                    message = "Done {done} device{plural_done} over {total} device{plural_total}".format(
+                        done=done,
+                        plural_done="s" if done > 1 else "",
+                        total=total,
+                        plural_total="s" if total > 1 else ""
+                    )
+                    self.update_state(state='PROGRESS', meta={'message': message, 'percentage': (done/total)*100-1})
+        self.update_state(state='PROGRESS', meta={'message': "File Fetching Finished", 'percentage': 100})
+        time.sleep(5)
+        app.logger.info(msg="Finished File Fetching")
     finally:
         if have_lock:
             SCAN_LOCK.release()
@@ -77,15 +93,16 @@ def scan_device_async(self, device, devicetype, manufacturer, pwdh):
 
 
 def scan_device(device, devicetype, manufacturer, pwdh, async=None):
+    """
+    Scan a single device. Device is a pickle object.
+    TODO: Async information for each device
+    """
     password = PasswordManager.decrypt_string(device.password, pwdh)
     enapassword = PasswordManager.decrypt_string(device.enapassword, pwdh)
     derror = {}
     if device.method in ['ssh', 'telnet']:
         if async:
-            async.update_state(state='PROGRESS', meta={
-                'message': "Connecting",
-                'percentage': 5,
-            })
+            async.update_state(state='PROGRESS', meta={'message': "Connecting", 'percentage': 5})
         if device.method == "ssh":
             s_tunnel = 'ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no '
             child = pexpect.spawn(s_tunnel + device.username + '@' + device.ip)
@@ -98,10 +115,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
             if m == 2:
                 child.sendline(device.username)
         if async:
-            async.update_state(state='PROGRESS', meta={
-                'message': "Sending Password",
-                'percentage': 10,
-            })
+            async.update_state(state='PROGRESS', meta={'message': "Sending Password", 'percentage': 10})
         q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO, 'assword:']))
         if perror(device, derror, q):
             return derror

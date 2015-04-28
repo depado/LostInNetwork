@@ -25,9 +25,7 @@ def start_scan_all_devices_async():
 
 @app.route('/status/scan', methods=['GET'])
 @login_required
-def status_scan_all_devices_async():
-    """
-    """
+def scan_all_devices_async_status():
     if not lock_available(SCAN_LOCK):
         task = scan_all_devices_async.AsyncResult(redis.Redis().get(SCAN_KEY))
         if task.state == 'PENDING':

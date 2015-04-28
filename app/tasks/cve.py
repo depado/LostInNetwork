@@ -47,6 +47,7 @@ def get_version(currentline):
 def cve_async(self):
     have_lock = False
     try:
+        app.logger.info("Started CVE Update")
         have_lock = CVE_LOCK.acquire(blocking=False)
         self.update_state(state='PROGRESS', meta={'message': "Downloading CVE", 'percentage': 5})
         try:
@@ -134,6 +135,7 @@ def cve_async(self):
         self.update_state(state='PROGRESS', meta={'message': "Update Finished", 'percentage': 100})
         time.sleep(5)
         db.session.commit()
+        app.logger.info("Finished CVE Update")
     finally:
         if have_lock:
             CVE_LOCK.release()
