@@ -13,12 +13,12 @@
         </div>
         <div id="row-progress-cve" hidden>
             <div class="progress">
-                <div id="progress-cve" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0"
+                <div id="progress-cve-percentage" class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0"
                      aria-valuemax="100" style="width: 0%; min-width: 2em;">
                     0%
                 </div>
             </div>
-            <span id="progress-message"></span>
+            <span id="progress-cve-message"></span>
         </div>
         <br/>
 
@@ -41,13 +41,12 @@
 
 {% block extra_js_at_end %}
 <script>
-    function start_long_task(url) {
-        console.log(url);
+    function start_long_task(url, status_url, percentage_div, message_div) {
         $.ajax({
             type: 'POST',
             url: url,
             success: function(data, status, request) {
-                update_progress();
+                update_progress(status_url, percentage_div, message_div);
             },
             error: function() {
                 alert('Unexpected error');
@@ -55,21 +54,20 @@
         });
     }
 
-    function update_progress() {
-        $.getJSON("{{ url_for('async_cve_update_status') }}", function(data) {
-            percent = parseInt(data['percentage']);
-            $('#progress-cve').css('width', percent + '%').attr('aria-valuenow', percent).text(percent + "%");
-            $('#progress-message').text(percent + "% " + data['message']);
-            if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
-                if ('result' in data) {
-                    $(status_div.childNodes[3]).text('Result: ' + data['new']);
-                } else {
-                    $(status_div.childNodes[3]).text('Result: ' + data['state']);
+    function update_progress(status_url, percentage_div, message_div) {
+        $.getJSON(status_url, function(data) {
+            if(data['status'] == 'PENDING') {
+                percentage_div.css('width 0%').attr('aria-valuenow', 0).text("0%");
+                message_div.text(percent + "% " + data['message']);
+            } else {
+                percent = parseInt(data['percentage']);
+                percentage_div.css('width', percent + '%').attr('aria-valuenow', percent).text(percent + "%");
+                message_div.text(percent + "% " + data['message']);
+                if (percent != 100) {
+                    setTimeout(function() {
+                        update_progress(status_url, percentage_div, message_div);
+                    }, 1000);
                 }
-            } else if (percent != 100) {
-                setTimeout(function() {
-                    update_progress();
-                }, 1000);
             }
         });
     }
@@ -81,7 +79,11 @@
         initial_data = data;
         if (initial_data.started) {
             $("#row-progress-cve").show();
-            update_progress();
+            update_progress(
+                "{{ url_for('async_cve_update_status') }}",
+                $("#progress-cve-percentage"),
+                $("#progress-cve-message")
+            );
         } else {
             $("#row-button-cve").show();
         }
@@ -89,14 +91,16 @@
     $("#getcve-async").click(function() {
         $("#row-progress-cve").show();
         $("#row-button-cve").hide();
-        start_long_task("{{ url_for('async_cve_update') }}");
+        start_long_task(
+            "{{ url_for('async_cve_update') }}",
+            "{{ url_for('async_cve_update_status') }}",
+            $("#progress-cve-percentage"),
+            $("#progress-cve-message")
+        );
     });
 
     $("#row-button-scan").show();
     $("#scan-async").click(function() {
-        // $("#row-progress-scan").show();
-        // $("#row-button-scan").hide();
-        console.log("{{ url_for('start_scan_all_devices_async') }}");
         start_long_task("{{ url_for('start_scan_all_devices_async') }}");
     });
 

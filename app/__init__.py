@@ -27,8 +27,8 @@ app.logger.addHandler(handler)
 
 db = SQLAlchemy(app)
 
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['CELERY_RESULT_BACKEND'])
-celery.config_from_object('app.tasks.beat_config')
+celery = Celery(app.name)
+celery.config_from_object('celeryconfig')
 
 login_manager = LoginManager()
 login_manager.init_app(app)

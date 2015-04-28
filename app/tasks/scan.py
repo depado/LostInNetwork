@@ -59,7 +59,9 @@ def scan_all_devices_async(self, pwdh):
         result = group(jobs).apply_async()
         while not result.ready():
             time.sleep(1)
-            # TODO: Update status here
+            for res in result.results:
+                print(res)
+                print(res.status)
         app.logger.info(msg="Finished")
     finally:
         if have_lock:
@@ -79,6 +81,11 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
     enapassword = PasswordManager.decrypt_string(device.enapassword, pwdh)
     derror = {}
     if device.method in ['ssh', 'telnet']:
+        if async:
+            async.update_state(state='PROGRESS', meta={
+                'message': "Connecting",
+                'percentage': 5,
+            })
         if device.method == "ssh":
             s_tunnel = 'ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no '
             child = pexpect.spawn(s_tunnel + device.username + '@' + device.ip)
@@ -90,6 +97,11 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
                 return derror
             if m == 2:
                 child.sendline(device.username)
+        if async:
+            async.update_state(state='PROGRESS', meta={
+                'message': "Sending Password",
+                'percentage': 10,
+            })
         q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO, 'assword:']))
         if perror(device, derror, q):
             return derror
