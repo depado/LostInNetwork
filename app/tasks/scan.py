@@ -65,17 +65,21 @@ def scan_all_devices_async(self, pwdh):
         while not result.ready():
             time.sleep(1)
             done = 0
+            failed = 0
             for res in result.results:
                 # res.info for data of the subtask, res.status for status
                 if res.status == 'SUCCESS':
                     done += 1
-                    message = "Done {done} device{plural_done} over {total} device{plural_total}".format(
-                        done=done,
-                        plural_done="s" if done > 1 else "",
-                        total=total,
-                        plural_total="s" if total > 1 else ""
-                    )
-                    self.update_state(state='PROGRESS', meta={'message': message, 'percentage': (done/total)*100-1})
+                if res.status == 'FAILED':
+                    failed += 1
+                message = "Done {done} device{plural_done} over {total} device{plural_total} {failed}".format(
+                    done=done,
+                    plural_done="s" if done > 1 else "",
+                    total=total,
+                    plural_total="s" if total > 1 else "",
+                    failed="({} failed)".format(failed) if failed > 0 else "",
+                )
+                self.update_state(state='PROGRESS', meta={'message': message, 'percentage': (done+failed/total)*100-1})
         self.update_state(state='PROGRESS', meta={'message': "File Fetching Finished", 'percentage': 100})
         time.sleep(5)
         app.logger.info(msg="Finished File Fetching")
@@ -100,6 +104,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
     password = PasswordManager.decrypt_string(device.password, pwdh)
     enapassword = PasswordManager.decrypt_string(device.enapassword, pwdh)
     derror = {}
+    app.logger.info("Started for {}".format(device.name))
     if device.method in ['ssh', 'telnet']:
         if async:
             async.update_state(state='PROGRESS', meta={'message': "Connecting", 'percentage': 5})
