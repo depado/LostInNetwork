@@ -1,5 +1,67 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% include 'menu.html' %}
+{% include 'menu.html' %}
+{% for name, value in data_dict.items() %}
+<div class="well transparent white">
+    <h3><a href="{{ value['url'] }}" style="color: white;">{{ name }}</a></h3>
+
+    <div class="panel-group" id="accordion-{{ name }}" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-transparent">
+            {% for date_sorted in value['configurations'] %}
+            <div class="panel-heading" role="tab" id="heading-{{ date_sorted[0].id }}">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-{{ name }}"
+                       href="#collapse-{{ date_sorted[0].id }}" aria-expanded="true"
+                       aria-controls="collapse-{{ date_sorted[0].id }}">
+                        {{ date_sorted[0]['conf'].date.strftime('%d-%m-%Y') }}
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-{{ date_sorted[0].id }}" class="panel-collapse collapse" role="tabpanel"
+                 aria-labelledby="heading-{{ date_sorted[0]['conf'].id }}">
+                <div class="panel-body">
+                    <div class="panel-group" id="in-accordion-{{ date_sorted[0]['conf'].id }}" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-transparent">
+                            <div class="panel-heading" role="tab" id="cve-in-heading-{{ date_sorted[0]['conf'].id }}">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#in-accordion-{{ date_sorted[0]['conf'].id }}" href="#cve-in-collapse-{{ date_sorted[0]['conf'].id }}"
+                                       aria-expanded="true" aria-controls="cve-in-collapse-{{ date_sorted[0]['conf'].id }}">
+                                        CVE
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="cve-in-collapse-{{ date_sorted[0]['conf'].id }}" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="cve-in-heading-{{ date_sorted[0]['conf'].id }}">
+                                <div class="panel-body">
+                                    {% for cve in date_sorted[0]['vulns']['cve'] %}
+                                    {{ cve }}<br /><br />
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="panel-heading" role="tab" id="conf-in-heading-{{ date_sorted[0]['conf'].id }}">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#in-accordion-{{ date_sorted[0]['conf'].id }}" href="#conf-in-collapse-{{ date_sorted[0]['conf'].id }}"
+                                       aria-expanded="true" aria-controls="conf-in-collapse-{{ date_sorted[0]['conf'].id }}">
+                                        Conf
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="conf-in-collapse-{{ date_sorted[0]['conf'].id }}" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="conf-in-heading-{{ date_sorted[0]['conf'].id }}">
+                                <div class="panel-body">
+                                    {% for basic in date_sorted[0]['vulns']['basic'] %}
+                                        {{ basic.match }} {{ basic.expectmatch }} <br />
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

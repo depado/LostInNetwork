@@ -15,16 +15,6 @@ from app.views.utils import generate_conf_dict
 @app.route("/configurations", methods=['GET', 'POST'])
 @login_required
 def configurations():
-    """
-    Configuration Dict :
-    configuration_dict[device.name]['url'] (name + url)
-    configuration_dict[device.name]['configurations'][
-        [conf, conf, conf, ...], <- same date (last date)
-        [conf, conf, conf, ...], <- older date
-        [conf, conf, conf, ...], <- even older date
-        ... <- etc, etc, etc
-    ]
-    """
     flash_default_password()
     configuration_dict = dict()
     devices = Device.query.filter(Device.configurations != None).all()

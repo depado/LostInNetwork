@@ -24,8 +24,7 @@ def checkcve(device, single=False):
                     inf = ''
                     sep = ''
                     sup = ''
-                    cvevers_search = re.search(
-                        '(\d+\.\d)(?:([-,])(\d+\.\d))?', cve_vers)
+                    cvevers_search = re.search('(\d+\.\d)(?:([-,])(\d+\.\d))?', cve_vers)
                     if cvevers_search:
                         if cvevers_search.group(1):
                             inf = cvevers_search.group(1)
@@ -50,7 +49,7 @@ def checkcve(device, single=False):
                                 obj.configuration_id = config.id
                                 obj.vulncve_id = cve.id
                         if obj.vulncve_id:
-                            obj.date=date
+                            obj.date = date
                             db.session.add(obj)
     if single:
         db.session.commit()

@@ -13,7 +13,9 @@ from app.models import Configuration
 def tasks():
     """
     Quite nothing to do here. Renders the template. Everything happens in async calls.
+    Also detects the last scan date.
     """
     flash_default_password()
-    last_fetch = Configuration.query.order_by(Configuration.date.desc()).first().date
+    last_conf = Configuration.query.order_by(Configuration.date.desc()).first()
+    last_fetch = last_conf.date if last_conf else None
     return render_template("tasks.html", active_page="tasks", last_fetch=last_fetch)

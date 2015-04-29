@@ -39,7 +39,7 @@ class VulnCve(db.Model):
         return True
 
     def __repr__(self):
-        return self.name
+        return self.description
 
 class VulnBasic(db.Model):
 
@@ -53,6 +53,8 @@ class VulnBasic(db.Model):
     description = db.Column(db.String())
     match = db.Column(db.String())
     expectmatch = db.Column(db.Integer())
+
+    # TODO: Add backref here
 
 #    configurationvalues_id = db.Column(db.Integer(), db.ForeignKey('configurationvalues.id'))
 #    configurationvalues = db.relationship('confvalues_vulnbasic', backref='vulnbasic', lazy='dynamic')
@@ -80,7 +82,7 @@ class VulnBasic(db.Model):
         return True
 
     def __repr__(self):
-        return self.name
+        return self.description
 
 class ConfVuln(db.Model):
     """
@@ -118,7 +120,7 @@ class ConfVuln(db.Model):
         return True
 
     def __repr__(self):
-        return self.path
+        return self.date
 
 
 class VulnPerm(db.Model):

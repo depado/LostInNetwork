@@ -162,7 +162,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
                 PasswordManager.encrypt_file(path, pwdh)
                 conf = Configuration()
                 conf.path = path
-                conf.device = device
+                conf.device_id = device.id
                 conf.date = datetime.now()
                 db.session.add(conf)
                 db.session.commit()

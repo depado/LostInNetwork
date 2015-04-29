@@ -60,6 +60,11 @@ class PasswordManager(object):
 
     @staticmethod
     def generate_pwdh_from_password(clear_text_pwd):
+        """
+        Generates the password hash from the password (in clear text). This is then stored in the session on login.
+        :param clear_text_pwd: The clear text password (catch at login time)
+        :return: The password hash used as a key for the AES Cipher
+        """
         m = SHA512.new()
         m.update(AESCipher.str_to_bytes(app.config.get('PWD_SALT')))
         m.update(AESCipher.str_to_bytes(clear_text_pwd))
@@ -191,6 +196,24 @@ class PasswordManager(object):
 
     @staticmethod
     def decrypt_file_content_from_session_pwdh(fname):
+        """
+        Decrypts the file content, without writing the content to disk. Uses the pwdh from the session.
+        (Can't be used in a celery task for example)
+        :param fname: The path of file to decrypt.
+        :return: The decrypted content of the file.
+        """
         with open(fname, 'rb') as fd:
             content = fd.read()
         return PasswordManager.decrypt_string_from_session_pwdh(content)
+
+    @staticmethod
+    def decrypt_file_content(fname, key):
+        """
+        Decrypts the file content, without writing the content to disk. Uses the specified key to decrypt the file.
+        :param fname: The path of the file to decrypt.
+        :param key: The key used to decryp above file.
+        :return: The decrypted content of the file.
+        """
+        with open(fname, 'rb') as fd:
+            content = fd.read()
+        return PasswordManager.decrypt_string(content, key)

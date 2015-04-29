@@ -7,6 +7,7 @@ from flask_login import login_required
 
 from app import app
 from app.tasks.analysis import ANALYSE_KEY, ANALYSE_LOCK, async_analysis
+from app.utils.crypto import PasswordManager
 
 from .lock import lock_available
 
@@ -17,7 +18,7 @@ def async_analysis_start():
     """
     Starts the Analysis and set the lock.
     """
-    task = async_analysis.apply_async()
+    task = async_analysis.apply_async((PasswordManager.get_session_pwdh(),))
     redis.Redis().set(ANALYSE_KEY, task.id)
     return jsonify({'key': task.id})
 

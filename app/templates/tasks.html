@@ -12,12 +12,14 @@
         {{ render_html_async_fetch(suffix="analyse", button_text="Start Analysis", help_text="Click here to start the analysis of the latest files fetched.") }}
     </div>
 </div>
+{% if last_fetch %}
 <div class="container-fluid white">
     <h2>Informations</h2>
     <div class="well transparent">
         <p><b>Last Fetch</b><br /> {{ last_fetch.strftime('%d-%m-%Y at %H:%M:%S')}}</p>
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js_at_end %}
