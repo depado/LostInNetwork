@@ -7,8 +7,7 @@ from app import app
 from app.forms import DeviceForm, DeviceTypeForm, LanForm, ManufacturerForm
 from app.models import Device, DeviceType, Lan, Manufacturer
 from app.utils import flash_default_password
-
-from .configurations import generate_conf_dict
+from app.views.utils import generate_conf_dict
 
 
 @app.route('/devices', methods=['GET', 'POST'])

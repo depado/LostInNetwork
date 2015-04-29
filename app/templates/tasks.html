@@ -6,9 +6,16 @@
 <div class="container-fluid white">
     <h2>Tasks</h2>
 
-    <div class="row-fluid well transparent white">
+    <div class="container-fluid well transparent white">
         {{ render_html_async_fetch(suffix="cve", button_text="Update CVE", help_text="The CVE Update is executed once per day at midnight. Click the above button to update the CVE right now.") }}
         {{ render_html_async_fetch(suffix="fetch", button_text="Fetch Configurations", help_text="Click here to fetch the configurations of your devices.") }}
+        {{ render_html_async_fetch(suffix="analyse", button_text="Start Analysis", help_text="Click here to start the analysis of the latest files fetched.") }}
+    </div>
+</div>
+<div class="container-fluid white">
+    <h2>Informations</h2>
+    <div class="well transparent">
+        <p><b>Last Fetch</b><br /> {{ last_fetch.strftime('%d-%m-%Y at %H:%M:%S')}}</p>
     </div>
 </div>
 {% endblock %}
@@ -79,5 +86,6 @@
 
     {{ render_js_call(suffix="cve", url='async_cve_update', status_url='async_cve_update_status') }}
     {{ render_js_call(suffix="fetch", url='start_scan_all_devices_async', status_url='scan_all_devices_async_status') }}
+    {{ render_js_call(suffix="analyse", url='async_analysis_start', status_url='async_analysis_status') }}
 </script>
 {% endblock %}

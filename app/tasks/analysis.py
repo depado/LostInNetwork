@@ -3,6 +3,7 @@
 import redis
 import celery
 import re
+import os
 from datetime import datetime
 
 from app import app, db
@@ -11,8 +12,10 @@ from app.models import Device, Configuration, VulnBasic, ConfVuln
 ANALYSE_KEY = "analyse_task_uuid"
 ANALYSE_LOCK = redis.Redis().lock("celery_analyse_lock")
 
+CISCO_PRECO_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "csv", "preco.csv")
+
 @celery.task(bind=True)
-def analyze_async(self):
+def async_analysis(self):
     have_lock = False
     try:
         app.logger.info("Started Analysis")

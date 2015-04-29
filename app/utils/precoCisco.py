@@ -3,13 +3,12 @@
 from app import app
 from app.models.vuln import VulnBasic
 
-
 def vulnbasic():
-    list_preco=open('data/source/preco.csv').readlines()
+    list_preco = open('data/source/preco.csv').readlines()
     app.logger.info('opening %s', app.config.get('list_preco'))
     for i in list_preco:
         x=i.split(';')
-        preco = VulnBasic(match=(x[0]),expectmatch=(x[1]),description=(x[2]))
+        preco = VulnBasic(match=(x[0]), expectmatch=(x[1]), description=(x[2]))
         preco.save()
 
 if __name__ == '__vulnbasic__':

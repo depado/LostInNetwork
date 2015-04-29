@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import re
-import time
 import datetime
 from app import db
 from app.models import Device, Configuration, ConfigurationValues, DeviceInterfaces, DeviceRoutes
 from app.utils.cisco_route import routeCisco
-from sqlalchemy import desc
 
 def mainupdate():
     today = datetime.date.today()

@@ -1,18 +1,27 @@
 {% macro render_html_async_fetch(suffix, button_text, help_text) %}
-<div id="row-button-{{ suffix }}" hidden>
-    <span><a id="button-{{ suffix }}" class="btn btn-primary">{{ button_text }}</a></span>
-    <span class="pull-right">{{ help_text }}</span>
-</div>
-<div id="row-progress-{{ suffix }}" hidden>
-    <div class="progress">
-        <div id="progress-percentage-{{ suffix }}" class="progress-bar" role="progressbar" aria-valuenow="60"
-             aria-valuemin="0" aria-valuemax="100" style="width: 0%; min-width: 2em;">
-            0%
+<div class="row" id="row-button-{{ suffix }}" hidden>
+    <div class="col-md-2">
+        <div>
+            <span><a id="button-{{ suffix }}" class="btn btn-primary btn-block">{{ button_text }}</a></span>
         </div>
     </div>
-    <span id="progress-message-{{ suffix }}"></span>
+    <div class="col-md-10">
+        <p>{{ help_text }}</p>
+    </div>
 </div>
-<br />
+<div class="row" id="row-progress-{{ suffix }}" hidden>
+    <div class="col-md-8">
+        <div class="progress">
+            <div id="progress-percentage-{{ suffix }}" class="progress-bar" role="progressbar" aria-valuenow="60"
+                 aria-valuemin="0" aria-valuemax="100" style="width: 0%; min-width: 2em;">
+                0%
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <p id="progress-message-{{ suffix }}"></p>
+    </div>
+</div><br />
 {% endmacro %}
 
 {% macro render_js_call(suffix, url, status_url) %}
