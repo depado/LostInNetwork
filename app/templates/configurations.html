@@ -3,6 +3,13 @@
 {% extends "base.html" %}
 {% block content %}
     {% include 'menu.html' %}
+    <div class="well transparent white">
+        <i>
+            Any operation on the configuration files, like downloading them or displaying them will decrypt their
+            content, but won't affect the file on disk, thus ensuring the files are always encrypted.
+            However, we can't control how the information is transmitted, so make sure your connection is secure.
+        </i>
+    </div>
     {% for name, value in configuration_dict.items() %}
     <div class="well transparent white">
         <h3><a href="{{ value['url'] }}" style="color: white;">{{ name }}</a> </h3>
@@ -19,14 +26,20 @@
                 <div id="collapse-{{ date_sorted[0].id }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ date_sorted[0].id }}">
                   <div class="panel-body">
                       <div class="container-fluid">
-                          <div class="row-fluid">
+                          <div class="row">
                               <div class="col-md-1">Actions</div>
-                              <div class="col-md-11">Path</div><br /><br />
+                              <div class="col-md-2">Date</div>
+                              <div class="col-md-1">Type</div>
+                              <div class="col-md-6">Path</div>
+                              <div class="col-md-2">Status</div><br /><br />
                           </div>
                           {% for conf in date_sorted %}
-                          <div class="row-fluid">
+                          <div class="row">
                               <div class="col-md-1">{{ render_configuration_action_button(conf) }}</div>
-                              <div class="col-md-11">{{ conf }}</div>
+                              <div class="col-md-2">{{ conf.date.strftime('%d-%m-%Y at %H:%M:%S') }}</div>
+                              <div class="col-md-1">{{ conf.path.split('/')[-1].split('-')[0] }}</div>
+                              <div class="col-md-6">{{ conf.path }}</div>
+                              <div class="col-md-2"><p style="color: green;"><i class="glyphicon glyphicon-ok"></i> <b>Encrypted</b></p></div>
                           </div>
                           {% endfor %}
                       </div>
