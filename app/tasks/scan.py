@@ -79,7 +79,7 @@ def scan_all_devices_async(self, pwdh):
                     plural_total="s" if total > 1 else "",
                     failed="({} failed)".format(failed) if failed > 0 else "",
                 )
-                self.update_state(state='PROGRESS', meta={'message': message, 'percentage': (done+failed/total)*100-1})
+                self.update_state(state='PROGRESS', meta={'message': message, 'percentage': ((done+failed)/total)*100-1})
         self.update_state(state='PROGRESS', meta={'message': "File Fetching Finished", 'percentage': 100})
         time.sleep(5)
         app.logger.info(msg="Finished File Fetching")
