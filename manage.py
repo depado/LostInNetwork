@@ -5,14 +5,6 @@ import os
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
-from app import app
-from app import db
-
-migrate = Migrate(app, db)
-
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
-
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 DATABASE_DIR = os.path.join(CURRENT_DIR, "database")
@@ -26,6 +18,7 @@ REQUIRED_FOLDERS = {
     'Database': DATABASE_DIR
 }
 
+
 def check_create_necessary_folders():
     for name, path in REQUIRED_FOLDERS.items():
         if not os.path.exists(path):
@@ -37,11 +30,23 @@ def touch(fullpath):
     with open(fullpath, 'a'):
         pass
 
+
 def check_create_files_folders():
     check_create_necessary_folders()
     if not os.path.exists(LOG_FILE):
         print("Log file not found. Creating.")
         touch(LOG_FILE)
+
+
+check_create_files_folders()
+
+from app import app
+from app import db
+
+migrate = Migrate(app, db)
+
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 
 @manager.command
@@ -50,8 +55,6 @@ def init():
     from app.models import User, Manufacturer, DeviceType, Lan
 
     try:
-        print("Checking existence of required folders...")
-        check_create_necessary_folders()
         print("Creating the database...")
         db.create_all()
         print("Enter the credentials for the main user :")
@@ -62,8 +65,7 @@ def init():
         user.save()
         m = Manufacturer(name="Cisco")
         m.save()
-        d = DeviceType(manufacturer=m, category="Router", name="Cisco Router")
-        d.save()
+        DeviceType(manufacturer=m, category="Router", name="Cisco Router").save()
         l = Lan(name='test')
         l.save()
         print("Done. Successfully added the main user, and the Cisco Router device type.")
