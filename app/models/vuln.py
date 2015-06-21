@@ -2,11 +2,12 @@
 
 from app import app, db
 
+
 class VulnCve(db.Model):
     """
     Store CVE
     """
-    __tablename__='vulncve'
+    __tablename__ = 'vulncve'
     friendly_name = "Vulnerability CVE"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -41,12 +42,13 @@ class VulnCve(db.Model):
     def __repr__(self):
         return self.description
 
+
 class VulnBasic(db.Model):
 
     """
     Basic Vulnerability
     """
-    __tablename__='vulnbasic'
+    __tablename__ = 'vulnbasic'
     friendly_name = "Vulnerability Basic"
         
     id = db.Column(db.Integer(), primary_key=True)
@@ -84,11 +86,12 @@ class VulnBasic(db.Model):
     def __repr__(self):
         return self.description
 
+
 class ConfVuln(db.Model):
     """
     Represents a Vulnerability in a conf
     """
-    __tablename__='confvuln'
+    __tablename__ = 'confvuln'
     friendly_name = "Configuration Vulnerability"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -120,7 +123,13 @@ class ConfVuln(db.Model):
         return True
 
     def __repr__(self):
-        return self.date
+        return str("id={}, configuration_id={}, vulnbasic_id={}, vulncve_id={}, date={}".format(
+            self.id,
+            self.configuration_id,
+            self.vulnbasic_id,
+            self.vulncve_id,
+            self.date
+        ))
 
 
 class VulnPerm(db.Model):
@@ -128,7 +137,7 @@ class VulnPerm(db.Model):
     """
     Permisssive Vulnerability
     """
-    __tablename__='vulnperm'
+    __tablename__ = 'vulnperm'
     friendly_name = "Vulnerability Permissive"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -159,4 +168,3 @@ class VulnPerm(db.Model):
 
     def __repr__(self):
         return self.name
-

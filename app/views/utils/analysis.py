@@ -22,10 +22,9 @@ def generate_analysis_dict(device):
     configuration_dict[device.name]['configurations'] = list()
     previous = None
     for configuration in Configuration.query.filter_by(device=device).order_by(Configuration.date.desc()):
-        truncated_date = configuration.date
-        truncated_date = truncated_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        truncated_date = configuration.date.replace(hour=0, minute=0, second=0, microsecond=0)
         vuln_dict = dict(cve=list(), basic=list())
-        for vuln in ConfVuln.query.filter(configuration.device == device).all():
+        for vuln in ConfVuln.query.filter(configuration.device_id == device.id).all():
             if vuln.vulnbasic_id:
                 basic = VulnBasic.query.get(vuln.vulnbasic_id)
                 if basic not in vuln_dict['basic']:

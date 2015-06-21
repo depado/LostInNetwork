@@ -1,14 +1,2 @@
-Psendcommand - marche pas
-config dir data/device
-table configuration ajouter champ date
-date des fichiers conf
-ex: rtr1-run-20150426.txt
-repertoire par devices data/device/<devicename>
-validation cle ssh
-affichage des resultat
-route
-vulnbasic ( add date )
-powerpoint
-rapport
-schema db
-
+Stocker le texte encrypté des fichiers de conf dans la bdd au lieu de mettre des fichiers en dur sur le disque.
+Fixer le problème des 3 routeurs, à savoir que le dernier n'est jamais pris en compte au delà de 3 routeurs.

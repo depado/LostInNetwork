@@ -58,6 +58,7 @@ DeviceForm = model_form(Device, base_class=CustomForm, db_session=db.session, fi
         'validators': [DataRequired()],
         'description': {
             'label': DeviceType.friendly_name,
+            'add_mode': False,
         }
     },
     'lan': {

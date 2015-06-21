@@ -18,21 +18,15 @@ Create the virtualenv and install the dependencies as follow :
     virtualenv --no-site-packages venv
     source venv/bin/activate
     pip install -r requirements.txt
-	mkdir tmp/ log/ data/
-    touch log/lostinnetwork.log
 There are some things to note here. First of all you may check what Python version the virtualenv software will install. It must be a 3.x version. If it's not, please install Python 3.x (the latest stable version will do) and make sure the python version installed in the virtualenv fits. The command **may** be called virtualenv-3.x. Another thing is that maybe you don't have `pip` installed in your virtualenv. To fix that `easy_install pip`.  
 
 **All the following commands and things described in this README needs to be done or executed with the activated virtualenv. Otherwise it may not work at all or won't have the expected behaviour.**
 
 You need the config.py file. There is one in the repo that is encrypted. You have to decrypt it with the appropriate passphrase.
 
-**If (and only if)** there is already a database in the repo, you can skip the database creation step (for now there is no database in the repo)  
-
-Ensure that there is already a database folder in the project root. (LostInNetwork/database/) If not, create it.   
-To create the database with the root/root user, do as follow :
-
-    python manage.py create_db
-    python manage.py create_superuser
+    python manage.py init
+    
+This command will create all the necessary folders and files in the application folder (where `manage.py` is) and ask you to create the main user by typing in the username and the password.
 
 You can then run your test server as follow :
 
