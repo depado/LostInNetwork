@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include 'menu.html' %}
+{% include 'includes/menu.html' %}
 {% for name, value in data_dict.items() %}
 <div class="well transparent white">
     <h3><a href="{{ value['url'] }}" style="color: white;">{{ name }}</a></h3>

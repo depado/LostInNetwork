@@ -66,7 +66,7 @@ def init():
         m = Manufacturer(name="Cisco")
         m.save()
         DeviceType(manufacturer=m, category="Router", name="Cisco Router").save()
-        l = Lan(name='test')
+        l = Lan(name='Global')
         l.save()
         print("Done. Successfully added the main user, and the Cisco Router device type.")
         print("You can now start the application using manage.py runserver for test purpose. ")

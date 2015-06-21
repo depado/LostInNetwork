@@ -31,9 +31,7 @@
   </head>
   <body>
     {% block content %}{% endblock %}
-    <footer class="footer">
-        <p>Lost In Network v1.0.0 Pony <span class="pull-right">Don't Panic and grab your towel.</span></p>
-    </footer>
+    {% include 'includes/footer.html' %}
     <script type="text/javascript">
         Messenger.options = {
           extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
