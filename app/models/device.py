@@ -59,8 +59,7 @@ class DeviceType(db.Model, DbMixin):
     name = db.Column(db.String(50), unique=True)
 
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.id'))
-    category = db.Column(db.Enum('Router', 'Level 2 Switch', 'Level 3 Switch',
-                                 'Firewall', name='type'), default='Router')
+    category = db.Column(db.Enum('Router', 'Switch Layer2', 'Switch Layer3','Firewall', name='type'), default='Cisco Router')
 
     devices = db.relationship('Device', backref='devicetype', lazy='dynamic')
 
@@ -92,7 +91,7 @@ class Device(db.Model, DbMixin):
     password = db.Column(db.String(66))
     enausername = db.Column(db.String(50))
     enapassword = db.Column(db.String(66))
-    method = db.Column(db.Enum('ssh', 'telnet', name='connect_method'), default='ssh')
+    method = db.Column(db.Enum('ssh', 'telnet', 'scp', name='connect_method'), default='ssh')
     lan_id = db.Column(db.Integer, db.ForeignKey('lan.id'))
     configurations = db.relationship('Configuration', backref='device', lazy='dynamic')
     devicetype_id = db.Column(db.Integer, db.ForeignKey('device_type.id'))

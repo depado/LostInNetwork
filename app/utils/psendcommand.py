@@ -16,7 +16,6 @@ from app.models.device import Device
 from app.utils.crypto import PasswordManager
 from app.utils.prompt_regex import *
 
-
 directory = 'data/'
 
 
@@ -59,7 +58,6 @@ def mainsendcommand():
         username = device.username
         method = 'ssh'
         enable = PasswordManager.decrypt_string(device.enapassword, PasswordManager.generate_pwdh_from_password("root"))
-        print(device.name + ' ' + device.ip + ' ' + username + ' ' + password + ' ' + enable + ' ' + device.devicetype.name)
         nameList.append(method + "," + device.name + "," + device.ip + "," + username + "," + password + "," + enable + "," + device.devicetype.manufacturer.name)
 
 
@@ -100,78 +98,62 @@ def send(data):
     sPassword = (x[4])
     sEnable = (x[5])
     sDeviceType = (x[6])
-    print (data)
-    # if sMethod == "scp":
-    #     app.logger.info('connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' whith ' + sMethod)
-    #     for key in ComUnix:
-    #         child = pexpect.spawn('scp %s@%s:%s %s/%s-%s.txt' % (sUsername, sIp, key, directory, sHostname, ComUnix[key]))
-    #         #q = child.expect(['assword:',r"yes/no",pexpect.TIMEOUT,pexpect.EOF], timeout=30)
-    #         q = child.expect(['assword:',PROMPT_ADD_KNOWN_HOST,pexpect.TIMEOUT,pexpect.EOF], timeout=30)
-    #         if q == 0:
-    #             child.sendline(sPassword)
-    #         elif q == 1:
-    #             child.sendline("yes")
-    #             child.expect("assword:", timeout=30)
-    #             child.sendline(password)
-    #         elif q == 2:
-    #             derror[sHostname]='TIMEOUT'
-    #             return derror
-    #         elif q == 3:
-    #             derror[sHostname]='EOF'
-    #             return derror
-    #         else:
-    #             derror[sHostname]='unknown error'
-    #             return derror
-    #         data = child.read()
-    #         derror[sHostname]='all is fine ;)'
-    #         child.close()
-    # elif (sMethod == "ssh" or sMethod == "telnet"):
     if (sMethod == "ssh" or sMethod == "telnet"):
         if sMethod == "ssh":
-            sTunnel = ('ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no -l ' + sDeviceType + ' ')
-            app.logger.info('connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
+            sTunnel = ('ssh -o ConnectTimeout=25 ')
+            app.logger.info('connecting to ' + sUsername + '@' + sIp + ' ' + sHostname + ' with ' + sMethod + ' and tunnel is ' + sTunnel)
             child = pexpect.spawn(sTunnel + sUsername + '@' + sIp)
         elif sMethod == "telnet":
             sTunnel = 'telnet '
-            app.logger.info('connecting to ' + sIp + ' ' + sHostname + ' whith ' + sMethod + ' and tunnel is ' + sTunnel)
+            app.logger.info('connecting to ' + sIp + ' ' + sHostname + ' with ' + sMethod + ' and tunnel is ' + sTunnel)
             child = pexpect.spawn(sTunnel + sIp)
-            m = child.expect([PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
-            if m == 0:
+            q = child.expect([PROMPT_REGEX_CISCO,pexpect.TIMEOUT, pexpect.EOF])
+            if q == 0:
                 child.sendline(sUsername)
-            elif m == 1:
+            elif q == 1:
                 derror[sHostname] = 'TIMEOUT'
                 return derror
             elif m == 2:
                 derror[sHostname] = 'EOF'
                 return derror
-        m = child.expect([PROMPT_REGEX_CISCO, 'assword:', pexpect.TIMEOUT, pexpect.EOF])
-        if m == 0:
+        q = child.expect(['.* continue connecting (yes/no)?',PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
+        if q == 0:
+            child.sendline('yes')
+            q = child.expect(['assword:', pexpect.TIMEOUT, pexpect.EOF])
+            if q == 0:
+                child.sendline(sPassword)
+            elif q == 1:
+                derror[sHostname] = 'TIMEOUT'
+                return derror
+            elif q == 2:
+                derror[sHostname] = 'EOF'
+                return derror
+        elif q == 1:
             child.sendline(sPassword)
-        elif m == 1:
-            child.sendline(sPassword)
-        elif m == 2:
+        elif q == 3:
             derror[sHostname] = 'TIMEOUT'
             return derror
-        elif m == 3:
+        elif q == 4:
             derror[sHostname] = 'EOF'
             return derror
         else:
             child.sendline(sPassword)
-        q = child.expect(['>', '[Pp]assword:', pexpect.TIMEOUT, pexpect.EOF])
-        # q = child.expect([PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
+
+        #connection is ok, can right now send commands to the device
+        q = child.expect([PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
         if q == 0:
             child.sendline('enable')
         elif q == 1:
             derror[sHostname] = 'wrong password'
         elif q == 2:
-            derror[sHostname] = 'TIMEOUT'
+            derror[sHostname] = 'TIMEOUT 1'
             return derror
         elif q == 3:
             derror[sHostname] = 'EOF'
             return derror
         else:
             child.sendline('enable')
-        q = child.expect(['assword:', '>', pexpect.TIMEOUT, pexpect.EOF])
+        q = child.expect([PROMPT_REGEX_CISCO, pexpect.TIMEOUT, pexpect.EOF])
         if q == 0:
             child.sendline(sEnable)
         elif q == 1:
@@ -182,7 +164,8 @@ def send(data):
         elif q == 3:
             derror[sHostname] = 'EOF'
         if sDeviceType == "Cisco":
-            q = child.expect([PROMPT_REGEX_CISCOENABLE, '>', pexpect.TIMEOUT, pexpect.EOF])
+            #q = child.expect([PROMPT_REGEX_CISCOENABLE, '>', pexpect.TIMEOUT, pexpect.EOF])
+            q = child.expect([PROMPT_REGEX_CISCO, '>', pexpect.TIMEOUT, pexpect.EOF])
             if q == 0:
                 child.sendline('terminal length 0')
             elif q == 1:
@@ -208,14 +191,15 @@ def send(data):
                 with open(directory + sHostname + '-' + ComCiscoISR[key] + '.txt', 'wb') as fd:
                     fd.write(child.before)
             child.sendline('exit')
+            derror[sHostname] = 'ALL FINE'
             return derror
         else:
             print('not cisco')
+    
+    elif sMethod == 'scp':
+        print ('I will do smoething ;)')
     else:
         derror[sHostname] = sMethod + ' not supported'
-
-
-
 
 
 if __name__ == '__mainsendcommand__':
