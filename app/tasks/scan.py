@@ -12,6 +12,7 @@ from datetime import datetime
 from app import app, db
 from app.models import Device, Configuration
 from app.utils.prompt_regex import *
+from app.utils.commands import *
 from app.utils.crypto import PasswordManager
 
 
@@ -109,27 +110,36 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
         if async:
             async.update_state(state='PROGRESS', meta={'message': "Connecting", 'percentage': 5})
         if device.method == "ssh":
-            s_tunnel = 'ssh -o ConnectTimeout=25 -o StrictHostKeyChecking=no '
+            s_tunnel = 'ssh -o ConnectTimeout=25 '
             child = pexpect.spawn(s_tunnel + device.username + '@' + device.ip)
         else:
             s_tunnel = 'telnet '
             child = pexpect.spawn(s_tunnel + device.ip)
-            m = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO]))
+            q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO]))
             if perror(device, derror, m):
                 return derror
-            if m == 2:
+            if q == 2:
                 child.sendline(device.username)
         if async:
             async.update_state(state='PROGRESS', meta={'message': "Sending Password", 'percentage': 10})
-        q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO, 'assword:']))
+        q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO, '.* continue connecting (yes/no)?']))
         if perror(device, derror, q):
             print(derror)
             return derror
-        if q in [2, 3]:
+        if q == 2:
             child.sendline(password)
-        else:
-            child.sendline(password)
-        q = child.expect(generate_pexpect_list(['>', '[Pp]assword:']))
+        if q == 3:
+            child.sendline('yes')
+            q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO, 'assword:']))
+            if perror(device, derror, m):
+                return derror
+            if q in [1, 2]:
+                child.sendline(password)
+            else:
+                child.sendline(password)
+        #ok, we can right now send commands to the device
+        #TODO : if enable password is not filled in db, try commands without enable
+        q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO]))
         if perror(device, derror, q):
             print(derror)
             return derror
@@ -139,7 +149,7 @@ def scan_device(device, devicetype, manufacturer, pwdh, async=None):
             derror[device.name] = 'wrong password'
         else:
             child.sendline('enable')
-        q = child.expect(generate_pexpect_list(['assword:', '>']))
+        q = child.expect(generate_pexpect_list([PROMPT_REGEX_CISCO]))
         if perror(device, derror, q):
             print(derror)
             return derror

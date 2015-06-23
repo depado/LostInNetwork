@@ -11,8 +11,7 @@ PROMPT_REGEX_JUNOSEDIT = "\r\n[^\r\n ]+@[^\r\n]+[\\\]#[ ]*"
 PROMPT_REGEX_BLUECOAT = "\r\n[^\r\n ]+>[ ]*"  # 20121312-YRG: need to veri
 PROMPT_REGEX_BLUECOATENABLE = "\r\n[^\r\n ]+#[ ]*"  # 20121312-YRG: need t
 PROMPT_REGEX_BLUECOATCONFIG = "\r\n[^\r\n ]+#([^)]+)[ ]*"  # 20121312-YRG:
-PROMPT_REGEX1_CISCO = "\r\n[\r]*[^\r\n\*># ]+[>#:][ ]*"
-PROMPT_REGEX_CISCO = ".*[>#:][ ]*"  # 20152701-ALD
+PROMPT_REGEX_CISCO = "\r\n[\r]*[^\r\n\*># ]+[>#:][ ]*"
 PROMPT_REGEX_CISCOASA = "\r\n\r[^\r\n\*># ]+[>#] "
 PROMPT_REGEX_CISCOENABLE = "\r\n[\r]*[^\r\n\*# ]+#[ ]*"
 PROMPT_REGEX_NETSCREEN = "\r\n[^\r\n ]+([^\r\n ]+)->[ ]*"  # 20121312-YRG
@@ -21,9 +20,7 @@ PROMPT_REGEX_TIPPINGPOINT = "[\r\n]+[^\r\n ]+#[ ]*"  # TippingPoint is
 PROMPT_REGEX_IRONPORT = "\r\n[\r]*[^\r\n\*># ]+>[ ]*"
 PROMPT_REGEX_NETSCALER = "\r\n[\r]*>[ ]*"
 
-# Definition command to send depends on the devicetype
 Regex = {
     'Cisco': (PROMPT_REGEX_CISCO, PROMPT_REGEX_CISCOENABLE),
     'ciscoASA': (PROMPT_REGEX_CISCOASA, PROMPT_REGEX_CISCOENABLE)
 }
-ComCiscoISR = {'sh ip route': 'route', 'sh run': 'run', 'sh version': 'version'}
